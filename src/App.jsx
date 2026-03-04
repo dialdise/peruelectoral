@@ -829,8 +829,8 @@ function Modal({candidate,onClose,all}){
     {label:"Riqueza Inexplicada (SUNAT)",value:candidate.breakdown.wealth,max:10,color:COLORS.accentBlue},
   ];
   return(
-    <div onClick={e=>e.target===e.currentTarget&&onClose()} style={{position:"fixed",inset:0,background:"#000000cc",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
-      <div style={{background:COLORS.surface,border:"1px solid "+color+"44",borderRadius:16,width:"100%",maxWidth:720,maxHeight:"92vh",overflow:"hidden",display:"flex",flexDirection:"column"}}>
+    <div onClick={e=>e.target===e.currentTarget&&onClose()} style={{position:"fixed",inset:0,background:"#000000cc",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16,overflowY:"auto"}}>
+      <div style={{background:COLORS.surface,border:"1px solid "+color+"44",borderRadius:16,width:"100%",maxWidth:720,height:"92vh",overflow:"hidden",display:"flex",flexDirection:"column",flexShrink:0}}>
 
         <div style={{background:COLORS.card,borderBottom:"1px solid "+COLORS.border,padding:"15px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div style={{display:"flex",alignItems:"center",gap:13}}>
