@@ -125,11 +125,7 @@ function genEmail(name,r){
 
 function buildCandidateFromName(fullName, level, partyData, index) {
   const r = seededRng(index*137+42);
-  const criminal = Math.round(r()*40);
-  const finance  = Math.round(r()*35);
-  const network  = Math.round(r()*15);
-  const wealth   = Math.round(r()*10);
-  const dept     = pick(DEPARTMENTS, r);
+  const dept = pick(DEPARTMENTS, r);
 
   const companyTypes=["Constructora","Consultora","Inmobiliaria","Agropecuaria","Servicios Generales","Tecnologia","Transporte","Salud","Educacion","Seguridad"];
   const contratanteEntidades=["Municipalidad Provincial","Gobierno Regional","Ministerio de Salud","Ministerio de Educacion","Ministerio de Transportes","ESSALUD","PROVIAS","Programa QALI WARMA","UGEL","PNP - Logistica","Ministerio de Defensa","Gobierno Local","SINEACE","SUNAT"];
@@ -177,7 +173,7 @@ function buildCandidateFromName(fullName, level, partyData, index) {
     value:"S/ "+(randInt(25,180,r)*1000).toLocaleString(),
   }));
 
-  const numCases=criminal>20?randInt(1,4,r):randInt(0,2,r);
+  const numCases=randInt(0,3,r);
   const caseTypes=["Peculado","Cohecho","Colusion","Enriquecimiento ilicito","Trafico de influencias","Lavado de activos"];
   const caseStatuses=["EN INVESTIGACION","ACUSADO","SENTENCIADO","ARCHIVADO","SOBRESEIDO"];
   const courtCases=Array.from({length:numCases},()=>({
@@ -231,6 +227,47 @@ function buildCandidateFromName(fullName, level, partyData, index) {
     };
   });
 
+  // --- MEANINGFUL RISK SCORES (calculated from actual generated data) ---
+
+  // Criminal: 10pts per case, +5 if ACUSADO, +15 if SENTENCIADO, cap 40
+  const criminal = Math.min(40,
+    courtCases.reduce((s, c) => {
+      let pts = 10;
+      if (c.status === "ACUSADO")     pts += 5;
+      if (c.status === "SENTENCIADO") pts += 15;
+      return s + pts;
+    }, 0)
+  );
+
+  // Finance: 4pts per suspicious donor, +8 bonus if more than 3 suspicious, cap 35
+  const suspCount = donors.filter(d => d.suspicious).length;
+  const finance = Math.min(35,
+    suspCount * 4 +
+    (suspCount > 3 ? 8 : 0)
+  );
+
+  // Network: state contracts +5, NO HABIDO company +5, flagged contracts +3 each, cap 15
+  const network = Math.min(15,
+    companies.reduce((s, co) => {
+      let pts = 0;
+      if (co.stateContracts)         pts += 5;
+      if (co.estado === "NO HABIDO") pts += 5;
+      pts += co.contracts.filter(c => c.alerta).length * 3;
+      return s + pts;
+    }, 0)
+  );
+
+  // Wealth: unregistered properties +3 each, assets>>salary +5, suspicious debt +2, cap 10
+  const salaryMonthly = randInt(3000, 25000, r);
+  const hasDebts      = r() > 0.5;
+  const totalAssets   = properties.reduce((s, p) =>
+    s + (parseInt(p.valuation.replace(/[^0-9]/g, "")) || 0), 0);
+  const wealth = Math.min(10,
+    properties.filter(p => !p.registered).length * 3 +
+    (totalAssets > salaryMonthly * 12 * 50 ? 5 : 0) +
+    (hasDebts && totalAssets > 500000 ? 2 : 0)
+  );
+
   return {
     id: index,
     fullName,
@@ -257,9 +294,9 @@ function buildCandidateFromName(fullName, level, partyData, index) {
       ruc: genRUC(r),
       taxStatus: pick(["HABIDO","NO HABIDO","BAJA PROVISIONAL"],r),
       companies, properties, vehicles,
-      salaryMonthly: randInt(3000,25000,r),
+      salaryMonthly,
       savingsTotal: randInt(5000,500000,r),
-      hasDebts: r()>0.5,
+      hasDebts,
       debtAmount: randInt(10000,200000,r),
       courtCases,
       campaignFinance:{ totalDeclared, donors, suspiciousDonations:donors.filter(d=>d.suspicious).length },
