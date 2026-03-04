@@ -1056,43 +1056,43 @@ export default function App(){
   return(
     <div style={{minHeight:"100vh",background:COLORS.bg,color:COLORS.text,fontFamily:"Trebuchet MS,sans-serif"}}>
       {/* Nav */}
-      <div style={{background:COLORS.surface,borderBottom:"1px solid "+COLORS.border,padding:"0 22px",display:"flex",alignItems:"center",justifyContent:"space-between",height:54,position:"sticky",top:0,zIndex:100}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:8,height:8,background:COLORS.accent,borderRadius:"50%",boxShadow:"0 0 10px "+COLORS.accent}}/>
-          <span style={{fontWeight:900,fontSize:15,letterSpacing:"0.15em"}}>VOTO TRANSPARENTE</span>
-          <span style={{fontSize:10,color:COLORS.textMuted,background:COLORS.bg,padding:"2px 7px",borderRadius:4,letterSpacing:"0.1em"}}>PERU 2026</span>
+      <div style={{background:COLORS.surface,borderBottom:"1px solid "+COLORS.border,padding:"0 12px",display:"flex",alignItems:"center",justifyContent:"space-between",minHeight:54,position:"sticky",top:0,zIndex:100,flexWrap:"wrap",gap:4}}>
+        <div style={{display:"flex",alignItems:"center",gap:7,padding:"8px 0"}}>
+          <div style={{width:8,height:8,background:COLORS.accent,borderRadius:"50%",boxShadow:"0 0 10px "+COLORS.accent,flexShrink:0}}/>
+          <span style={{fontWeight:900,fontSize:13,letterSpacing:"0.1em"}}>VOTO TRANSPARENTE</span>
+          <span style={{fontSize:9,color:COLORS.textMuted,background:COLORS.bg,padding:"2px 6px",borderRadius:4,letterSpacing:"0.08em"}}>PERU 2026</span>
         </div>
-        <div style={{display:"flex",gap:4}}>
+        <div style={{display:"flex",gap:3,flexWrap:"wrap",padding:"4px 0"}}>
           {[["dashboard","Panel"],["partidos","Partidos"],["regiones","Regiones"]].map(([v,l])=>(
-            <button key={v} onClick={()=>setView(v)} style={navBtn(view===v)}>{l}</button>
+            <button key={v} onClick={()=>setView(v)} style={{...navBtn(view===v),padding:"5px 10px",fontSize:11}}>{l}</button>
           ))}
         </div>
       </div>
 
       {/* Stats bar */}
-      <div style={{background:"linear-gradient(180deg,"+COLORS.surface+" 0%,"+COLORS.bg+" 100%)",borderBottom:"1px solid "+COLORS.border,padding:"18px 22px 16px"}}>
+      <div style={{background:"linear-gradient(180deg,"+COLORS.surface+" 0%,"+COLORS.bg+" 100%)",borderBottom:"1px solid "+COLORS.border,padding:"14px 12px 12px"}}>
         <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{fontSize:10,color:COLORS.textMuted,letterSpacing:"0.12em",marginBottom:9}}>
-            {"SISTEMA DE INTELIGENCIA ELECTORAL - ELECCIONES GENERALES 12 ABRIL 2026 - "+new Date().toLocaleDateString("es-PE").toUpperCase()}
+          <div style={{fontSize:9,color:COLORS.textMuted,letterSpacing:"0.08em",marginBottom:9,lineHeight:1.4}}>
+            {"SISTEMA DE INTELIGENCIA ELECTORAL · ELECCIONES GENERALES 12 ABRIL 2026 · "+new Date().toLocaleDateString("es-PE").toUpperCase()}
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:10}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
             {[
-              {label:"CANDIDATOS ANALIZADOS",value:stats.total,color:COLORS.accentBlue},
+              {label:"CANDIDATOS",value:stats.total,color:COLORS.accentBlue},
               {label:"ALTO RIESGO",value:stats.high,color:COLORS.riskHigh},
               {label:"RIESGO MEDIO",value:stats.med,color:COLORS.accentOrange},
-              {label:"INDICE PROMEDIO",value:stats.avg,color:COLORS.accentYellow},
-              {label:"VISITANTES UNICOS",value:visitors,color:COLORS.accentGreen},
+              {label:"INDICE PROM.",value:stats.avg,color:COLORS.accentYellow},
+              {label:"VISITANTES",value:visitors,color:COLORS.accentGreen},
             ].map(({label,value,color})=>(
-              <div key={label} style={{background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:10,padding:"12px 14px",borderTop:"3px solid "+color}}>
-                <div style={{fontSize:24,fontWeight:900,color,fontFamily:"monospace"}}>{value}</div>
-                <div style={{fontSize:9,color:COLORS.textMuted,marginTop:2,letterSpacing:"0.08em"}}>{label}</div>
+              <div key={label} style={{background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:10,padding:"10px 12px",borderTop:"3px solid "+color}}>
+                <div style={{fontSize:22,fontWeight:900,color,fontFamily:"monospace"}}>{value}</div>
+                <div style={{fontSize:8,color:COLORS.textMuted,marginTop:2,letterSpacing:"0.07em"}}>{label}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div style={{maxWidth:1100,margin:"0 auto",padding:"16px 22px"}}>
+      <div style={{maxWidth:1100,margin:"0 auto",padding:"12px 10px"}}>
 
         {view==="dashboard"&&(
           <div>
@@ -1183,7 +1183,7 @@ export default function App(){
               )}
             </div>
 
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:10}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:10}}>
               {filtered.map(c=><CandidateCard key={c.id} candidate={c} onClick={setSelected}/>)}
             </div>
           </div>
