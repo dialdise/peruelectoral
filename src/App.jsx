@@ -993,6 +993,22 @@ export default function App(){
   const [filterDept,setFilterDept]=useState("Todos");
   const [sortBy,setSortBy]=useState("risk");
   const [selected,setSelected]=useState(null);
+  const [visitors,setVisitors]=useState(0);
+
+  useEffect(()=>{
+    try {
+      let uid=localStorage.getItem("vt_uid");
+      if(!uid){ uid=Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem("vt_uid",uid); }
+      const count=parseInt(localStorage.getItem("vt_count")||"0");
+      const known=JSON.parse(localStorage.getItem("vt_known")||"[]");
+      if(!known.includes(uid)){
+        const n=count+1;
+        localStorage.setItem("vt_count",n);
+        localStorage.setItem("vt_known",JSON.stringify([...known,uid]));
+        setVisitors(n);
+      } else { setVisitors(count); }
+    } catch(e){ setVisitors("—"); }
+  },[]);
 
   const filtered=ALL_CANDIDATES.filter(c=>{
     const q=search.toLowerCase();
@@ -1059,12 +1075,13 @@ export default function App(){
           <div style={{fontSize:10,color:COLORS.textMuted,letterSpacing:"0.12em",marginBottom:9}}>
             {"SISTEMA DE INTELIGENCIA ELECTORAL - ELECCIONES GENERALES 12 ABRIL 2026 - "+new Date().toLocaleDateString("es-PE").toUpperCase()}
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:10}}>
             {[
               {label:"CANDIDATOS ANALIZADOS",value:stats.total,color:COLORS.accentBlue},
               {label:"ALTO RIESGO",value:stats.high,color:COLORS.riskHigh},
               {label:"RIESGO MEDIO",value:stats.med,color:COLORS.accentOrange},
               {label:"INDICE PROMEDIO",value:stats.avg,color:COLORS.accentYellow},
+              {label:"VISITANTES UNICOS",value:visitors,color:COLORS.accentGreen},
             ].map(({label,value,color})=>(
               <div key={label} style={{background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:10,padding:"12px 14px",borderTop:"3px solid "+color}}>
                 <div style={{fontSize:24,fontWeight:900,color,fontFamily:"monospace"}}>{value}</div>
