@@ -1,27 +1,59 @@
-# Transparencia Electoral Perú 2026
+# Transparencia Electoral Perú 🇵🇪
 
-Plataforma de transparencia electoral con datos en tiempo real del JNE (Jurado Nacional de Elecciones).
+Plataforma de visualización y consulta de datos electorales del Jurado Nacional de Elecciones (JNE) del Perú.
 
-🌐 **Live:** https://dialdise.github.io/peru-electoral/
+Este proyecto ofrece una interfaz web interactiva para explorar información oficial de candidatos y procesos electorales en Perú 2026, consumiendo datos directamente desde las APIs públicas del JNE.
 
-## Características
+---
 
-- Datos en tiempo real desde la API oficial del JNE
-- Consulta de candidatos por cargo: Presidente, Vicepresidente, Senadores, Diputados, Parlamento Andino
-- Filtros por partido, estado y búsqueda por nombre/DNI
-- Estadísticas de estado de inscripción (Inscrito, Improcedente, Exclusión, Renuncia, Apelación)
+## 🎯 Objetivo
 
-## Fuente de datos
+Facilitar el acceso ciudadano a información electoral actualizada, estructurada y accesible para:
 
-API oficial: `https://web.jne.gob.pe/serviciovotoinformado/`
+- Transparencia pública
+- Periodismo de datos
+- Investigación académica
+- Análisis político
+- Seguimiento ciudadano
 
-## Desarrollo local
+---
 
-```bash
-npm install
-npm run dev
-```
+## 🚀 Características
 
-## Despliegue
+- ✅ Consumo de datos en tiempo real desde la API oficial del JNE  
+- ✅ Consulta por tipo de cargo (Presidencia, Congreso, Parlamento Andino)  
+- ✅ Búsqueda por nombre o partido político  
+- ✅ Filtros por estado de inscripción  
+- ✅ Estadísticas dinámicas  
+- ✅ Interfaz responsive (desktop y móvil)  
 
-El sitio se despliega automáticamente en GitHub Pages al hacer push a `main`.
+---
+
+## 🌐 Demo
+
+Versión desplegada en GitHub Pages:
+
+https://dialdise.github.io/peru-electoral/
+
+---
+
+## 🗃️ Fuente de Datos
+
+API pública oficial: https://web.jne.gob.pe/serviciovotoinformado/
+
+
+Todos los datos pertenecen al Jurado Nacional de Elecciones del Perú.
+
+---
+
+## 🛠️ Instalación
+
+### Requisitos
+
+- Node.js >= 14
+- npm o yarn
+
+⚠️ Disclaimer
+
+Este proyecto no está afiliado oficialmente al Jurado Nacional de Elecciones.
+Solo consume información pública disponible en su API oficial.
