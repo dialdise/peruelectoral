@@ -14,10 +14,10 @@ const DEPARTMENTS = ["Lima","Lima Provincias","Arequipa","Cusco","La Libertad","
 const PARTY_COLOR_MAP = {"FP":"#F5A623","APP":"#003087","PP":"#7B1FA2","JP":"#00695C","PL":"#CC0000","RP":"#1565C0","AVP":"#00695C","SP":"#F57F17","PAP":"#B71C1C","AC":"#E65100","MOR":"#6A1B9A","AN":"#1565C0","PP1":"#0277BD","CP":"#1A237E","AV":"#BF360C","FEP":"#1B5E20","FREPAP":"#795548","FL":"#4A148C","LP2":"#4E342E","PCO":"#E64A19","PTE":"#455A64","PBG":"#2E7D32","PDU":"#4527A0","PDV":"#2E7D32","PDF":"#880E4F","FE":"#EF6C00","PPT":"#00838F","PPP":"#B71C1C","ID":"#37474F","PA":"#AD1457","PRIN":"#546E7A","PLG":"#00838F","PRG":"#558B2F","SAP":"#E65100","UCD":"#6A1B9A","UN":"#0D47A1","SC":"#00695C"};
 
 const LEVEL_INFO = {
-  "Presidente":       { icon:"🏛️", desc:"Jefe de Estado y Gobierno. Elegido por voto directo nacional. Periodo: 5 anos.", seats:1 },
+  "Presidente":       { icon:"🏛️", desc:"Jefe de Estado y Gobierno. Elegido por voto directo nacional. Período: 5 años.", seats:1 },
   "Vicepresidente":   { icon:"🤝", desc:"Primer y Segundo Vicepresidente. Forman la plancha presidencial junto al candidato.", seats:2 },
-  "Senador":          { icon:"📜", desc:"Camara Alta del Congreso Bicameral (propuesta). Representacion nacional. 60 escanos.", seats:60 },
-  "Diputado":         { icon:"🗳️", desc:"Camara Baja. Representacion por circunscripcion departamental. 130 escanos.", seats:130 },
+  "Senador":          { icon:"📜", desc:"Cámara Alta del Congreso Bicameral (propuesta). Representación nacional. 60 escaños.", seats:60 },
+  "Diputado":         { icon:"🗳️", desc:"Cámara Baja. Representación por circunscripción departamental. 130 escaños.", seats:130 },
 };
 
 const LEVELS = Object.keys(LEVEL_INFO);
@@ -34,7 +34,7 @@ const PRESIDENTIAL_FORMULAS = [
     presidente:"Rosario Fernandez Bazan",     vp1:"Cesar Fernandez Bazan",         vp2:"Carlos Pinillos Vinces" },
   { partido:"Partido Patriotico del Peru", color:"#B71C1C", abbr:"PPP",
     presidente:"Herbert Caller Gutierrez",    vp1:"Rossana Montes Tello",          vp2:"Jorge Carcovich Cortelezzi" },
-  { partido:"Ahora Nacion",              color:"#1565C0", abbr:"AN",
+  { partido:"Ahora Nación",              color:"#1565C0", abbr:"AN",
     presidente:"Alfonso Lopez Chau Nava",     vp1:"Luis Villanueva Carbajal",      vp2:"Ruth Buendia Mestoquiari" },
   { partido:"Podemos Peru",              color:"#7B1FA2", abbr:"PP",
     presidente:"Jose Luna Galvez",            vp1:"Jaqueline Garcia Rodriguez",    vp2:"Raul Noblecilla Olaechea" },
@@ -56,7 +56,7 @@ const PRESIDENTIAL_FORMULAS = [
     presidente:"George Forsyth Sommer",       vp1:"Johanna Lozada Baldwin",        vp2:"Herbe Olave Ugarte" },
   { partido:"Pais Para Todos",           color:"#00838F", abbr:"PPT",
     presidente:"Carlos Alvarez Loayza",       vp1:"Maria Chambizea Reyes",         vp2:"Diego Guevara Vivanco" },
-  { partido:"Peru Accion",               color:"#AD1457", abbr:"PA",
+  { partido:"Perú Acción",               color:"#AD1457", abbr:"PA",
     presidente:"Francisco Diez-Canseco",      vp1:"Roberto Koster Jauregui",       vp2:"Clara Quispe Torres" },
   { partido:"Integridad Democratica",    color:"#37474F", abbr:"ID",
     presidente:"Wolfgang Grozo Costa",        vp1:"Bertha Azabache Miranda",       vp2:"Wellington Prada Chipayo" },
@@ -66,7 +66,7 @@ const PRESIDENTIAL_FORMULAS = [
     presidente:"Napoleon Becerra Garcia",     vp1:"Winston Huaman Henriquez",      vp2:"Nelida Cuayla Cuayla" },
   { partido:"Alianza Venceremos",        color:"#BF360C", abbr:"AV",
     presidente:"Ronald Atencio Sotomayor",    vp1:"Elena Rivera Huaman",           vp2:"Alberto Quintanilla Chacon" },
-  { partido:"Cooperacion Popular",       color:"#1A237E", abbr:"CP",
+  { partido:"Cooperación Popular",       color:"#1A237E", abbr:"CP",
     presidente:"Yonhy Lescano Ancieta",       vp1:"Carmela Salazar Jauregui",      vp2:"Vanessa Lazo Valles" },
   { partido:"Partido Democrata Federal", color:"#880E4F", abbr:"PDF",
     presidente:"Armando Masse Fernandez",     vp1:"Virgilio Acuna Peralta",        vp2:"Lydia Diaz Pablo" },
@@ -88,7 +88,7 @@ const PRESIDENTIAL_FORMULAS = [
     presidente:"Vladimir Cerron Rojas",       vp1:"Flavio Cruz Mamani",            vp2:"Bertha Rojas Lopez" },
   { partido:"Partido PRIN",              color:"#546E7A", abbr:"PRIN",
     presidente:"Walter Chirinos Purizaga",    vp1:"Julio Vega Ibanez",             vp2:"Mayra Vargas Gil" },
-  { partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP",
+  { partido:"Renovación Popular",        color:"#1565C0", abbr:"RP",
     presidente:"Rafael Lopez Aliaga",         vp1:"Norma Yarrow Lumbreras",        vp2:"Jhon Ramos Malpica" },
   { partido:"Avanza Pais",               color:"#00695C", abbr:"AVP",
     presidente:"Jose Williams Zapata",        vp1:"Fernan Altuve-Febres Lores",    vp2:"Adriana Tudela Gutierrez" },
@@ -101,13 +101,13 @@ const PRESIDENTIAL_FORMULAS = [
 const ALL_SOURCES = ["MINJUS","JNE PECAFOR","SUNAT","INFOCORP"];
 const FLAGS = [
   "Proceso judicial activo","Financiamiento irregular detectado",
-  "Vinculo con red corrupta","Enriquecimiento inexplicado",
+  "Vínculo con red corrupta","Enriquecimiento inexplicado",
   "Inhabilitado por MINJUS","Contrato con empresa inhabilitada",
 ];
 const STREET_NAMES = ["Av. Los Libertadores","Jr. Tupac Amaru","Calle Las Flores","Av. Ejercito","Jr. Union","Calle Real","Av. Grau","Jr. Amazonas","Av. La Marina","Calle Huancayo"];
 const DISTRICTS = ["Miraflores","San Isidro","Surco","Callao","Lince","Pueblo Libre","Jesus Maria","San Borja","La Molina","Barranco","Wanchaq","Arequipa Centro","Piura Centro","Trujillo Centro"];
-const PROFESSIONS = ["Abogado","Economista","Ingeniero Civil","Medico Cirujano","Contador Publico","Docente Universitario","Administrador de Empresas","Arquitecto","Sociologo","Politologo"];
-const EMPLOYERS = ["Congreso de la Republica","Gobierno Regional","Municipalidad Provincial","Universidad Nacional","Empresa privada","Independiente","Consultora SAC","ONG local"];
+const PROFESSIONS = ["Abogado","Economista","Ingeniero Civil","Medico Cirujano","Contador Público","Docente Universitario","Administrador de Empresas","Arquitecto","Sociologo","Politologo"];
+const EMPLOYERS = ["Congreso de la República","Gobierno Regional","Municipalidad Provincial","Universidad Nacional","Empresa privada","Independiente","Consultora SAC","ONG local"];
 
 
 function seededRng(seed) { let s=seed; return ()=>{ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
@@ -129,9 +129,9 @@ function buildCandidateFromName(fullName, level, partyData, index) {
   const r = seededRng(index*137+42);
   const dept = pick(DEPARTMENTS, r);
 
-  const companyTypes=["Constructora","Consultora","Inmobiliaria","Agropecuaria","Servicios Generales","Tecnologia","Transporte","Salud","Educacion","Seguridad"];
-  const contratanteEntidades=["Municipalidad Provincial","Gobierno Regional","Ministerio de Salud","Ministerio de Educacion","Ministerio de Transportes","ESSALUD","PROVIAS","Programa QALI WARMA","UGEL","PNP - Logistica","Ministerio de Defensa","Gobierno Local","SINEACE","SUNAT"];
-  const objetoContrato=["Obra de infraestructura vial","Suministro de alimentos escolares","Servicio de consultoria TI","Construccion de centro de salud","Mantenimiento de equipos","Servicio de vigilancia","Adquisicion de vehiculos oficiales","Construccion de colegio","Servicio de limpieza y seguridad","Estudios de factibilidad","Equipamiento hospitalario","Servicio de capacitacion"];
+  const companyTypes=["Constructora","Consultora","Inmobiliaria","Agropecuaria","Servicios Generales","Tecnologia","Transporte","Salud","Educación","Seguridad"];
+  const contratanteEntidades=["Municipalidad Provincial","Gobierno Regional","Ministerio de Salud","Ministerio de Educación","Ministerio de Transportes","ESSALUD","PROVIAS","Programa QALI WARMA","UGEL","PNP - Logistica","Ministerio de Defensa","Gobierno Local","SINEACE","SUNAT"];
+  const objetoContrato=["Obra de infraestructura vial","Suministro de alimentos escolares","Servicio de consultoria TI","Construcción de centro de salud","Mantenimiento de equipos","Servicio de vigilancia","Adquisición de vehiculos oficiales","Construcción de colegio","Servicio de limpieza y seguridad","Estudios de factibilidad","Equipamiento hospitalario","Servicio de capacitación"];
   const numCo=randInt(0,3,r);
   const companies=Array.from({length:numCo},()=>{
     const hasContracts=r()>0.45;
@@ -141,9 +141,9 @@ function buildCandidateFromName(fullName, level, partyData, index) {
       objeto:pick(objetoContrato,r),
       monto:"S/ "+(randInt(50,8000,r)*1000).toLocaleString(),
       anio:randInt(2018,2025,r),
-      proceso:pick(["Licitacion Publica","Adjudicacion Simplificada","Concurso Publico","Seleccion de Consultores","Subasta Inversa Electronica"],r),
+      proceso:pick(["Licitación Pública","Adjudicación Simplificada","Concurso Público","Selección de Consultores","Subasta Inversa Electrónica"],r),
       nroContrato:"C-"+randInt(100,999,r)+"-"+randInt(2018,2025,r),
-      estado:pick(["EJECUTADO","EN EJECUCION","RESUELTO","OBSERVADO"],r),
+      estado:pick(["EJECUTADO","EN EJECUCIÓN","RESUELTO","OBSERVADO"],r),
       alerta:r()>0.65,
     }));
     const totalContratos=contracts.reduce((s,c)=>{
@@ -176,11 +176,11 @@ function buildCandidateFromName(fullName, level, partyData, index) {
   }));
 
   const numCases=randInt(0,3,r);
-  const caseTypes=["Peculado","Cohecho","Colusion","Enriquecimiento ilicito","Trafico de influencias","Lavado de activos"];
-  const caseStatuses=["EN INVESTIGACION","ACUSADO","SENTENCIADO","ARCHIVADO","SOBRESEIDO"];
+  const caseTypes=["Peculado","Cohecho","Colusión","Enriquecimiento ilícito","Tráfico de influencias","Lavado de activos"];
+  const caseStatuses=["EN INVESTIGACIÓN","ACUSADO","SENTENCIADO","ARCHIVADO","SOBRESEIDO"];
   const courtCases=Array.from({length:numCases},()=>({
     type:pick(caseTypes,r), year:randInt(2010,2024,r),
-    court:"Juzgado "+pick(["Penal","Anticorrupcion","Civil"],r)+" de "+dept,
+    court:"Juzgado "+pick(["Penal","Anticorrupción","Civil"],r)+" de "+dept,
     status:pick(caseStatuses,r),
     expediente:randInt(1000,9999,r)+"-"+randInt(2010,2024,r)+"-"+randInt(10,99,r),
   }));
@@ -192,11 +192,11 @@ function buildCandidateFromName(fullName, level, partyData, index) {
   const companyNames=["Constructora","Consultora","Inversiones","Corporacion","Servicios","Grupo Empresarial","Holding","Desarrolladora"];
   const suspiciousReasons=[
     "Persona sin historial tributario conocido (SUNAT sin actividad declarada)",
-    "Empresa creada menos de 6 meses antes de la donacion",
+    "Empresa creada menos de 6 meses antes de la donación",
     "Monto supera el patrimonio declarado del donante",
-    "Vinculo directo con contratista del Estado con contratos vigentes",
+    "Vínculo directo con contratista del Estado con contratos vigentes",
     "Donante figura como proveedor de entidad publica vinculada al candidato",
-    "RUC con estado NO HABIDO o BAJA al momento de la donacion",
+    "RUC con estado NO HABIDO o BAJA al momento de la donación",
     "Empresa shell sin empleados ni activos registrados en SUNAT",
     "Multiples donaciones fraccionadas del mismo origen (posible testaferrismo)",
     "Donante con proceso judicial activo por lavado de activos",
@@ -225,7 +225,7 @@ function buildCandidateFromName(fullName, level, partyData, index) {
       ruc:isCompany?genRUC(r):null,
       suspicious,
       reasons,
-      relationship:suspicious?pick(["Contratista del Estado","Ex funcionario publico","Sin relacion declarada","Vinculo familiar no declarado","Proveedor municipal"],r):pick(["Militante del partido","Simpatizante","Empresario local","Sin relacion especial"],r),
+      relationship:suspicious?pick(["Contratista del Estado","Ex funciónario publico","Sin relación declarada","Vinculo familiar no declarado","Proveedor municipal"],r):pick(["Militante del partido","Simpatizante","Empresario local","Sin relación especial"],r),
     };
   });
 
@@ -334,7 +334,7 @@ PRESIDENTIAL_FORMULAS.forEach((f) => {
 });
 
 // Real senator candidates from JNE official lists (votoinformado.jne.gob.pe/senadores)
-// Source: Partido declarations + RPP/Gestion/ElComercio coverage Feb 2026
+// Source: Partido declarations + RPP/Gestión/ElComercio coverage Feb 2026
 const REAL_SENATORS = [
   // Fuerza Popular (FP) — Lista nacional encabezada por Miguel Torres
   { name:"Miguel Torres Morales",           partido:"Fuerza Popular",            color:"#F5A623", abbr:"FP", pos:1, circ:"Nacional" },
@@ -346,14 +346,14 @@ const REAL_SENATORS = [
   { name:"Martha Moyano Delgado",           partido:"Fuerza Popular",            color:"#F5A623", abbr:"FP", pos:7, circ:"Nacional" },
   { name:"Carlos Tubino Arias-Schreiber",   partido:"Fuerza Popular",            color:"#F5A623", abbr:"FP", pos:8, circ:"Nacional" },
   { name:"Jose Arista Arbildo",             partido:"Fuerza Popular",            color:"#F5A623", abbr:"FP", pos:9, circ:"Amazonas" },
-  // Renovacion Popular (RP)
-  { name:"Gladys Echaiz Ramos",             partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Nacional" },
-  { name:"Jorge Solis Espinoza",            partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP", pos:2, circ:"Nacional" },
-  { name:"Absalon Vasquez Villanueva",      partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP", pos:5, circ:"Nacional" },
-  { name:"Patricia Chirinos Venegas",       partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Callao" },
-  { name:"Jose Cueto Aservi",               partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Lima" },
-  { name:"Victor Leon Alvarez",             partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"La Libertad" },
-  { name:"Reynaldo Hilbck Guzman",          partido:"Renovacion Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Piura" },
+  // Renovación Popular (RP)
+  { name:"Gladys Echaiz Ramos",             partido:"Renovación Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Nacional" },
+  { name:"Jorge Solis Espinoza",            partido:"Renovación Popular",        color:"#1565C0", abbr:"RP", pos:2, circ:"Nacional" },
+  { name:"Absalon Vasquez Villanueva",      partido:"Renovación Popular",        color:"#1565C0", abbr:"RP", pos:5, circ:"Nacional" },
+  { name:"Patricia Chirinos Venegas",       partido:"Renovación Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Callao" },
+  { name:"Jose Cueto Aservi",               partido:"Renovación Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Lima" },
+  { name:"Victor Leon Alvarez",             partido:"Renovación Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"La Libertad" },
+  { name:"Reynaldo Hilbck Guzman",          partido:"Renovación Popular",        color:"#1565C0", abbr:"RP", pos:1, circ:"Piura" },
   // Alianza para el Progreso (APP)
   { name:"Cesar Vasquez Ramirez",           partido:"Alianza para el Progreso",  color:"#003087", abbr:"APP", pos:1, circ:"Nacional" },
   { name:"Juan Jose Santivaniez Antunez",   partido:"Alianza para el Progreso",  color:"#003087", abbr:"APP", pos:2, circ:"Nacional" },
@@ -365,15 +365,15 @@ const REAL_SENATORS = [
   { name:"Guido Bellido Ugarte",            partido:"Podemos Peru",              color:"#7B1FA2", abbr:"PP", pos:5, circ:"Nacional" },
   { name:"Herminia Chino Mamani",           partido:"Podemos Peru",              color:"#7B1FA2", abbr:"PP", pos:6, circ:"Nacional" },
   { name:"Edgar Tello Cuadros",             partido:"Podemos Peru",              color:"#7B1FA2", abbr:"PP", pos:7, circ:"Nacional" },
-  // Ahora Nacion
-  { name:"Patricia Correa Maguina",         partido:"Ahora Nacion",              color:"#1565C0", abbr:"AN", pos:2, circ:"Nacional" },
-  { name:"Jaime Delgado Zegarra",           partido:"Ahora Nacion",              color:"#1565C0", abbr:"AN", pos:5, circ:"Nacional" },
-  { name:"Mirtha Vasquez Chuquilin",        partido:"Ahora Nacion",              color:"#1565C0", abbr:"AN", pos:4, circ:"Nacional" },
-  { name:"Ruth Luque Ibarra",               partido:"Ahora Nacion",              color:"#1565C0", abbr:"AN", pos:8, circ:"Nacional" },
-  // Cooperacion Popular
-  { name:"Carlos Zeballos Patricio",        partido:"Cooperacion Popular",       color:"#1A237E", abbr:"CP", pos:3, circ:"Nacional" },
-  { name:"Carlos Torres Caro",              partido:"Cooperacion Popular",       color:"#1A237E", abbr:"CP", pos:9, circ:"Nacional" },
-  { name:"Miguel Palomino Pedraza",         partido:"Cooperacion Popular",       color:"#1A237E", abbr:"CP", pos:11, circ:"Nacional" },
+  // Ahora Nación
+  { name:"Patricia Correa Maguina",         partido:"Ahora Nación",              color:"#1565C0", abbr:"AN", pos:2, circ:"Nacional" },
+  { name:"Jaime Delgado Zegarra",           partido:"Ahora Nación",              color:"#1565C0", abbr:"AN", pos:5, circ:"Nacional" },
+  { name:"Mirtha Vasquez Chuquilin",        partido:"Ahora Nación",              color:"#1565C0", abbr:"AN", pos:4, circ:"Nacional" },
+  { name:"Ruth Luque Ibarra",               partido:"Ahora Nación",              color:"#1565C0", abbr:"AN", pos:8, circ:"Nacional" },
+  // Cooperación Popular
+  { name:"Carlos Zeballos Patricio",        partido:"Cooperación Popular",       color:"#1A237E", abbr:"CP", pos:3, circ:"Nacional" },
+  { name:"Carlos Torres Caro",              partido:"Cooperación Popular",       color:"#1A237E", abbr:"CP", pos:9, circ:"Nacional" },
+  { name:"Miguel Palomino Pedraza",         partido:"Cooperación Popular",       color:"#1A237E", abbr:"CP", pos:11, circ:"Nacional" },
   // Fuerza y Libertad (PPK incluido)
   { name:"Pedro Pablo Kuczynski",           partido:"Fuerza y Libertad",         color:"#4A148C", abbr:"FL", pos:1, circ:"Lima Metropolitana" },
   { name:"Antonio Quispe Torres",           partido:"Fuerza y Libertad",         color:"#4A148C", abbr:"FL", pos:10, circ:"Nacional" },
@@ -423,18 +423,18 @@ const REAL_DIPUTADOS_FALLBACK = [
   { name:"David Tapullima Upiachihua",    partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"San Martin" },
   { name:"Jacqueline Tapullima Insapillo",partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"San Martin" },
   { name:"Svieta Fernandez Gonzalez",     partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"Tacna" },
-  { name:"Carlos Franko Llanos",          partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"Tacna" },
+  { name:"Carlos Franko Llaños",          partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"Tacna" },
   { name:"Elvis Mendoza Aguilar",         partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"Tumbes" },
   { name:"Daniel Varas Seguin",           partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"Ancash" },
-  // Renovacion Popular
-  { name:"Maria Teresa Dulanto Minea",    partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
-  { name:"Johnny Bacon Terrones",         partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
-  { name:"Roberto Delatorre Aguayo",      partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
-  { name:"Diego Bazan Calderon",          partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"La Libertad" },
-  { name:"Miriam Gayoso Salas",           partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"Piura" },
-  { name:"Lourdes Alcorta Suero",         partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
-  { name:"Perci Rivas Ocejo",             partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"Ayacucho" },
-  { name:"Katia Revollar Florez",         partido:"Renovacion Popular", color:"#1565C0", abbr:"RP", dept:"Cusco" },
+  // Renovación Popular
+  { name:"Maria Teresa Dulanto Minea",    partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
+  { name:"Johnny Bacon Terrones",         partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
+  { name:"Roberto Delatorre Aguayo",      partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
+  { name:"Diego Bazan Calderon",          partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"La Libertad" },
+  { name:"Miriam Gayoso Salas",           partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"Piura" },
+  { name:"Lourdes Alcorta Suero",         partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"Lima" },
+  { name:"Perci Rivas Ocejo",             partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"Ayacucho" },
+  { name:"Katia Revollar Florez",         partido:"Renovación Popular", color:"#1565C0", abbr:"RP", dept:"Cusco" },
   // Fuerza Popular
   { name:"Alejandro Muñante Riquelme",    partido:"Fuerza Popular",     color:"#F5A623", abbr:"FP", dept:"Lima" },
   { name:"Karina Montoya Navarro",        partido:"Fuerza Popular",     color:"#F5A623", abbr:"FP", dept:"Lima" },
@@ -637,7 +637,7 @@ function CompanyCard({co}){
                 ))}
               </div>
               {ct.alerta&&<div style={{marginTop:7,padding:"5px 8px",background:COLORS.riskHigh+"0d",borderRadius:5,fontSize:9,color:COLORS.riskHigh,border:"1px solid "+COLORS.riskHigh+"22"}}>
-                Contrato bajo observacion de la Contraloria General de la Republica. Verificar en infobras.gob.pe
+                Contrato bajo observacion de la Contraloria General de la República. Verificar en infobras.gob.pe
               </div>}
             </div>
           ))}
@@ -709,7 +709,7 @@ function PublicDataTab({candidate}){
     <div>
       <div style={{background:COLORS.accentBlue+"12",border:"1px solid "+COLORS.accentBlue+"44",borderRadius:10,padding:"11px 14px",marginBottom:14,display:"flex",alignItems:"center",justifyContent:"space-between",gap:10,flexWrap:"wrap"}}>
         <div>
-          <div style={{fontSize:12,fontWeight:700,color:COLORS.accentBlue}}>Datos de registros publicos del Estado peruano</div>
+          <div style={{fontSize:12,fontWeight:700,color:COLORS.accentBlue}}>Datos de registros públicos del Estado peruano</div>
           <div style={{fontSize:10,color:COLORS.textMuted}}>Fuentes: RENIEC, JNE, SUNAT, Poder Judicial, PECAFOR, INFOGOB</div>
         </div>
         <button onClick={()=>{setScraping(true);setTimeout(()=>{setScraping(false);setScraped(true);},2000);}} disabled={scraping}
@@ -738,7 +738,7 @@ function PublicDataTab({candidate}){
         <CompanyCard key={i} co={co}/>
       )):<div style={{fontSize:11,color:COLORS.textDim,padding:"6px 0"}}>Sin empresas registradas</div>}
 
-      <SecHead title="JNE - Declaracion de Bienes" color={COLORS.accentYellow}/>
+      <SecHead title="JNE - Declaración de Bienes" color={COLORS.accentYellow}/>
       <DataRow icon="💵" label="Ingreso Mensual Declarado" value={"S/ "+pd.salaryMonthly.toLocaleString()} highlight={COLORS.accentYellow}/>
       <DataRow icon="🏦" label="Ahorros Totales" value={"S/ "+pd.savingsTotal.toLocaleString()} highlight={COLORS.accentYellow}/>
       {pd.hasDebts&&<DataRow icon="⚠️" label="Deudas Declaradas" value={"S/ "+pd.debtAmount.toLocaleString()} highlight={COLORS.accentOrange}/>}
@@ -750,7 +750,7 @@ function PublicDataTab({candidate}){
               <div><div style={{fontSize:11,color:COLORS.text}}>{p.address}</div><div style={{fontSize:9,color:COLORS.textMuted}}>{p.area}</div></div>
               <div style={{textAlign:"right"}}>
                 <div style={{fontSize:11,fontWeight:700,color:COLORS.accentYellow}}>{p.valuation}</div>
-                {!p.registered&&<div style={{fontSize:9,color:COLORS.riskHigh}}>No en registros publicos</div>}
+                {!p.registered&&<div style={{fontSize:9,color:COLORS.riskHigh}}>No en registros públicos</div>}
               </div>
             </div>
           ))}
@@ -799,14 +799,14 @@ function PublicDataTab({candidate}){
       )}
 
       <div style={{background:COLORS.bg,border:"1px solid "+COLORS.border,borderRadius:7,padding:"9px 12px",marginTop:14}}>
-        <div style={{fontSize:9,color:COLORS.textDim,lineHeight:1.6}}>Datos de registros publicos: RENIEC, JNE, SUNAT, Poder Judicial, ONPE. Los datos de contacto son los declarados ante el JNE. Uso regulado por Ley 27806 y Ley 29733.</div>
+        <div style={{fontSize:9,color:COLORS.textDim,lineHeight:1.6}}>Datos de registros públicos: RENIEC, JNE, SUNAT, Poder Judicial, ONPE. Los datos de contacto son los declarados ante el JNE. Uso regulado por Ley 27806 y Ley 29733.</div>
       </div>
     </div>
   );
 }
 
 const OFFICIAL_SOURCES=[
-  {id:"minjus1",label:"Inhabilitados MINJUS",desc:"Personas inhabilitadas para funcion publica (CENADEC)",icon:"⚖️",color:COLORS.riskHigh,url:"https://www.minjus.gob.pe/registro-de-condenados-cenadec/",badge:"MINJUS"},
+  {id:"minjus1",label:"Inhabilitados MINJUS",desc:"Personas inhabilitadas para función publica (CENADEC)",icon:"⚖️",color:COLORS.riskHigh,url:"https://www.minjus.gob.pe/registro-de-condenados-cenadec/",badge:"MINJUS"},
   {id:"jne1",label:"Hoja de Vida JNE",desc:"Declaracion jurada de vida, bienes e ingresos",icon:"📄",color:"#003087",url:"https://declara.jne.gob.pe/",badge:"JNE"},
   {id:"jne2",label:"PECAFOR Financiamiento",desc:"Control del Financiamiento de Organizaciones Politicas",icon:"💰",color:"#003087",url:"https://pecafor.jne.gob.pe/",badge:"JNE"},
   {id:"jne3",label:"INFOGOB Historial",desc:"Historial electoral y gobernabilidad",icon:"🗳️",color:"#0055A5",url:"https://infogob.jne.gob.pe/",badge:"JNE"},
@@ -935,7 +935,7 @@ function Modal({candidate,onClose,all}){
               <div style={{background:COLORS.bg,border:"1px solid "+COLORS.border,borderRadius:9,padding:"12px 14px",marginBottom:14}}>
                 <div style={{fontSize:10,fontWeight:700,color:COLORS.textMuted,letterSpacing:"0.08em",marginBottom:8}}>CANALES OFICIALES DE DENUNCIA</div>
                 <div style={{display:"grid",gap:5}}>
-                  {[{label:"JNE - Impugnaciones",url:"https://portal.jne.gob.pe/portal/Pagina/Index/4",color:"#003087",icon:"🗳️"},{label:"Fiscalia Anticorrupcion",url:"https://www.mpfn.gob.pe/elfiscal/denuncias/",color:COLORS.riskHigh,icon:"⚖️"},{label:"Contraloria - Denuncias",url:"https://apps.contraloria.gob.pe/wcm/control_ciudadano/index.html",color:"#6A1B9A",icon:"🔎"},{label:"ONPE - Infracciones",url:"https://www.onpe.gob.pe/modfinanciero/",color:"#1B5E20",icon:"💰"}].map(ch=>(
+                  {[{label:"JNE - Impugnaciones",url:"https://portal.jne.gob.pe/portal/Página/Index/4",color:"#003087",icon:"🗳️"},{label:"Fiscalia Anticorrupción",url:"https://www.mpfn.gob.pe/elfiscal/denuncias/",color:COLORS.riskHigh,icon:"⚖️"},{label:"Contraloria - Denuncias",url:"https://apps.contraloria.gob.pe/wcm/control_ciudadano/index.html",color:"#6A1B9A",icon:"🔎"},{label:"ONPE - Infracciones",url:"https://www.onpe.gob.pe/modfinanciero/",color:"#1B5E20",icon:"💰"}].map(ch=>(
                     <a key={ch.label} href={ch.url} target="_blank" rel="noopener noreferrer"
                       style={{display:"flex",alignItems:"center",gap:9,padding:"8px 11px",background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:7,textDecoration:"none"}}
                       onMouseEnter={e=>{e.currentTarget.style.borderColor=ch.color;e.currentTarget.style.background=ch.color+"10";}}
@@ -1077,35 +1077,37 @@ export default function App(){
   }).sort((a,b)=>b.avgRisk-a.avgRisk);
 
   // Each counter respects the OTHER active filters (so badge counts stay consistent with what's visible)
-  const byLevel = filterLevel==="Todos" ? candidates : candidates.filter(c=>c.level===filterLevel);
-  const byDept  = filterDept==="Todos"  ? candidates : candidates.filter(c=>c.department===filterDept);
-  const byRisk  = filterRisk==="Todos"  ? candidates
-    : candidates.filter(c=>filterRisk==="Alto"?c.riskScore>=70:filterRisk==="Medio"?(c.riskScore>=45&&c.riskScore<70):filterRisk==="Bajo"?(c.riskScore>=20&&c.riskScore<45):c.riskScore<20);
+  // Base pools: apply the OTHER two filters, never the filter being counted
+  // So each badge always shows "how many would match if you clicked me"
+  const riskScore = (c,rv) => rv==="Alto"?c.riskScore>=70:rv==="Medio"?(c.riskScore>=45&&c.riskScore<70):rv==="Bajo"?(c.riskScore>=20&&c.riskScore<45):c.riskScore<20;
+  const matchesDept = (c) => filterDept==="Todos" || c.department===filterDept;
+  const matchesLevel = (c) => filterLevel==="Todos" || c.level===filterLevel;
+  const matchesRisk = (c) => filterRisk==="Todos" || riskScore(c, filterRisk);
 
+  // For CARGO badges: apply dept+risk filters, count per level
   const countLv=(lv)=>{
-    const base = filterRisk==="Todos" ? byDept : byDept.filter(c=>filterRisk==="Alto"?c.riskScore>=70:filterRisk==="Medio"?(c.riskScore>=45&&c.riskScore<70):filterRisk==="Bajo"?(c.riskScore>=20&&c.riskScore<45):c.riskScore<20);
+    const base = candidates.filter(c => matchesDept(c) && matchesRisk(c));
     return lv==="Todos" ? base.length : base.filter(c=>c.level===lv).length;
   };
+  // For NIVEL DE RIESGO badges: apply level+dept filters, count per risk — NEVER filter by active risk
   const countRk=(rv)=>{
-    const base = byLevel.filter(c=>filterDept==="Todos"||c.department===filterDept);
+    const base = candidates.filter(c => matchesLevel(c) && matchesDept(c));
     if(rv==="Todos") return base.length;
-    if(rv==="Alto") return base.filter(c=>c.riskScore>=70).length;
-    if(rv==="Medio") return base.filter(c=>c.riskScore>=45&&c.riskScore<70).length;
-    if(rv==="Bajo") return base.filter(c=>c.riskScore>=20&&c.riskScore<45).length;
-    if(rv==="Limpio") return base.filter(c=>c.riskScore<20).length;
-    return 0;
+    return base.filter(c=>riskScore(c,rv)).length;
   };
+  // For DEPARTAMENTO badges: apply level+risk filters, count per dept
   const countDp=(d)=>{
-    const base = byLevel.filter(c=>filterRisk==="Todos"||( filterRisk==="Alto"?c.riskScore>=70:filterRisk==="Medio"?(c.riskScore>=45&&c.riskScore<70):filterRisk==="Bajo"?(c.riskScore>=20&&c.riskScore<45):c.riskScore<20));
+    const base = candidates.filter(c => matchesLevel(c) && matchesRisk(c));
     return d==="Todos" ? base.length : base.filter(c=>c.department===d).length;
   };
 
+
   const RISK_OPTS=[
     {val:"Todos",label:"Todos",color:COLORS.textMuted,desc:"Todos los candidatos sin filtro de riesgo"},
-    {val:"Alto",label:"Alto Riesgo",color:COLORS.riskHigh,desc:"Score 70-100: indicios graves en multiples fuentes"},
+    {val:"Alto",label:"Alto Riesgo",color:COLORS.riskHigh,desc:"Score 70-100: indicios graves en múltiples fuentes"},
     {val:"Medio",label:"Riesgo Medio",color:COLORS.riskMed,desc:"Score 45-69: alertas moderadas detectadas"},
     {val:"Bajo",label:"Riesgo Bajo",color:COLORS.riskLow,desc:"Score 20-44: indicios menores o aislados"},
-    {val:"Limpio",label:"Sin Indicios",color:COLORS.riskClean,desc:"Score 0-19: sin hallazgos en registros publicos"},
+    {val:"Limpio",label:"Sin Indicios",color:COLORS.riskClean,desc:"Score 0-19: sin hallazgos en registros públicos"},
   ];
 
   const inp={background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:8,padding:"8px 12px",color:COLORS.text,fontSize:12};
@@ -1186,7 +1188,7 @@ export default function App(){
               </div>
               {filterLevel!=="Todos"&&LEVEL_INFO[filterLevel]&&(
                 <div style={{marginTop:7,padding:"7px 11px",background:COLORS.accentBlue+"0d",border:"1px solid "+COLORS.accentBlue+"22",borderRadius:6,fontSize:11,color:COLORS.textMuted}}>
-                  <span style={{color:COLORS.accentBlue,fontWeight:700}}>{"Escanos: "+LEVEL_INFO[filterLevel].seats+" — "}</span>
+                  <span style={{color:COLORS.accentBlue,fontWeight:700}}>{"Escaños: "+LEVEL_INFO[filterLevel].seats+" — "}</span>
                   {LEVEL_INFO[filterLevel].desc}
                 </div>
               )}
@@ -1251,7 +1253,7 @@ export default function App(){
               {paginated.map(c=><CandidateCard key={c.id} candidate={c} onClick={c=>setSelected(expandCandidate(c))}/>)}
             </div>
 
-            {/* Pagination controls */}
+            {/* Págination controls */}
             {totalPages>1&&(
               <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginTop:20,flexWrap:"wrap"}}>
                 <button onClick={()=>setPage(1)} disabled={safePage===1}
@@ -1288,8 +1290,8 @@ export default function App(){
 
         {view==="partidos"&&(
           <div>
-            <div style={{fontSize:13,color:COLORS.textMuted,marginBottom:6}}>Indice de Riesgo Partidario — 36 planchas presidenciales inscritas para el 12 de abril 2026.</div>
-            <div style={{fontSize:11,color:COLORS.textDim,marginBottom:16}}>Fuente: JEE Lima Centro 1 — Elecciones Generales Peru 2026</div>
+            <div style={{fontSize:13,color:COLORS.textMuted,marginBottom:6}}>Índice de Riesgo Partidario — 36 planchas presidenciales inscritas para el 12 de abril 2026.</div>
+            <div style={{fontSize:11,color:COLORS.textDim,marginBottom:16}}>Fuente: JEE Lima Centro 1 — Elecciones Generales Perú 2026</div>
             <div style={{display:"grid",gap:9}}>
               {partyStats.map((p,i)=>{
                 const {color}=getRisk(p.avgRisk);
@@ -1315,7 +1317,7 @@ export default function App(){
 
         {view==="regiones"&&(
           <div>
-            <div style={{fontSize:13,color:COLORS.textMuted,marginBottom:16}}>Distribucion de riesgo por departamento. Haz clic para filtrar candidatos.</div>
+            <div style={{fontSize:13,color:COLORS.textMuted,marginBottom:16}}>Distribución de riesgo por departamento. Haz clic para filtrar candidatos.</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:8}}>
               {DEPARTMENTS.map(dept=>{
                 const dc=candidates.filter(c=>c.department===dept);
@@ -1342,7 +1344,7 @@ export default function App(){
 
       <div style={{background:COLORS.card,borderTop:"1px solid "+COLORS.border,padding:"10px 22px",textAlign:"center"}}>
         <span style={{fontSize:9,color:COLORS.textDim,letterSpacing:"0.06em"}}>
-          VOTO TRANSPARENTE — Datos de registros publicos. Indices referenciales, no constituyen acusaciones legales. Fuentes: MINJUS, JNE, SUNAT, PJ, ONPE — Ley 27806 — Elecciones Generales Peru 12 Abril 2026
+          VOTO TRANSPARENTE — Datos de registros públicos. Índices referenciales, no constituyen acusaciones legales. Fuentes: MINJUS, JNE, SUNAT, PJ, ONPE — Ley 27806 — Elecciones Generales Perú 12 Abril 2026
         </span>
       </div>
 
