@@ -1046,8 +1046,11 @@ export default function App(){
       .catch(()=>setDiputadosLoaded(true));
   },[]);
 
-  // Reset to page 1 whenever filters/sort/search change
-  useEffect(()=>{ setPage(1); },[search,filterLevel,filterRisk,filterDept,sortBy,candidates]);
+  // Reset to page 1 synchronously when filters change — useEffect fires AFTER render
+  // causing one stale frame where old page slices wrong data
+  const filterKey = search+"|"+filterLevel+"|"+filterRisk+"|"+filterDept+"|"+sortBy;
+  const prevFilterKey = useRef(filterKey);
+  if(prevFilterKey.current !== filterKey){ prevFilterKey.current = filterKey; if(page!==1) setPage(1); }
 
   const filtered=candidates.filter(c=>{
     const q=search.toLowerCase();
@@ -1058,9 +1061,10 @@ export default function App(){
     return ms&&ml&&mr&&md;
   }).sort((a,b)=>sortBy==="risk"?b.riskScore-a.riskScore:a.lastName.localeCompare(b.lastName));
 
+  const currentPage = prevFilterKey.current !== filterKey ? 1 : Math.min(page, Math.max(1,Math.ceil(filtered.length/PAGE_SIZE)));
   const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
   const safePage=Math.min(page,totalPages);
-  const paginated=filtered.slice((safePage-1)*PAGE_SIZE, safePage*PAGE_SIZE);
+  const paginated=filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
 
   const stats={
     total:candidates.length,
