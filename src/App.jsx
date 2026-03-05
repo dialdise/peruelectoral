@@ -285,32 +285,44 @@ function buildCandidateFromName(fullName, level, partyData, index) {
     flags: FLAGS.filter(()=>r()>0.65),
     sources: ALL_SOURCES.filter(()=>r()>0.4),
     reportCount: Math.floor(r()*12),
-    publicData:{
-      dni: genDNI(r),
-      birthDate: randInt(1,28,r)+"/"+randInt(1,12,r)+"/"+randInt(1950,1985,r),
-      birthPlace: dept,
-      address: pick(STREET_NAMES,r)+" "+randInt(100,999,r)+", "+pick(DISTRICTS,r)+", "+dept,
-      maritalStatus: pick(["Casado","Soltero","Divorciado","Viudo","Conviviente"],r),
-      email: genEmail(fullName,r),
-      phone: genPhone(r),
-      profession: pick(PROFESSIONS,r),
-      employer: pick(EMPLOYERS,r),
-      ruc: genRUC(r),
-      taxStatus: pick(["HABIDO","NO HABIDO","BAJA PROVISIONAL"],r),
-      companies, properties, vehicles,
-      salaryMonthly,
-      savingsTotal: randInt(5000,500000,r),
-      hasDebts,
-      debtAmount: randInt(10000,200000,r),
-      courtCases,
-      campaignFinance:{ totalDeclared, donors, suspiciousDonations:donors.filter(d=>d.suspicious).length },
-      social:{
-        facebook: r()>0.4?"fb.com/"+fullName.toLowerCase().replace(/[^a-z]/g,"").substring(0,12):null,
-        twitter: r()>0.5?"@"+fullName.toLowerCase().replace(/[^a-z]/g,"").substring(0,12):null,
-        instagram: r()>0.4?"@"+fullName.toLowerCase().replace(/[^a-z]/g,"").substring(0,12):null,
-      },
+    // publicData is generated lazily on first modal open (see expandCandidate)
+    _lazyData: { companies, properties, vehicles, salaryMonthly, hasDebts,
+      totalAssets, courtCases, donors, totalDeclared, dept },
+  };
+}
+
+// Called only when a candidate modal is opened — avoids generating 26k full profiles upfront
+function expandCandidate(c) {
+  if (c.publicData) return c; // already expanded
+  const { companies, properties, vehicles, salaryMonthly, hasDebts,
+    totalAssets, courtCases, donors, totalDeclared, dept } = c._lazyData;
+  const r = seededRng(c.id*137+42+999);
+  c.publicData = {
+    dni: genDNI(r),
+    birthDate: randInt(1,28,r)+"/"+randInt(1,12,r)+"/"+randInt(1950,1985,r),
+    birthPlace: dept,
+    address: pick(STREET_NAMES,r)+" "+randInt(100,999,r)+", "+pick(DISTRICTS,r)+", "+dept,
+    maritalStatus: pick(["Casado","Soltero","Divorciado","Viudo","Conviviente"],r),
+    email: genEmail(c.fullName,r),
+    phone: genPhone(r),
+    profession: pick(PROFESSIONS,r),
+    employer: pick(EMPLOYERS,r),
+    ruc: genRUC(r),
+    taxStatus: pick(["HABIDO","NO HABIDO","BAJA PROVISIONAL"],r),
+    companies, properties, vehicles,
+    salaryMonthly,
+    savingsTotal: randInt(5000,500000,r),
+    hasDebts,
+    debtAmount: randInt(10000,200000,r),
+    courtCases,
+    campaignFinance:{ totalDeclared, donors, suspiciousDonations:donors.filter(d=>d.suspicious).length },
+    social:{
+      facebook: r()>0.4?"fb.com/"+c.fullName.toLowerCase().replace(/[^a-z]/g,"").substring(0,12):null,
+      twitter:  r()>0.5?"@"+c.fullName.toLowerCase().replace(/[^a-z]/g,"").substring(0,12):null,
+      instagram:r()>0.4?"@"+c.fullName.toLowerCase().replace(/[^a-z]/g,"").substring(0,12):null,
     },
   };
+  return c;
 }
 
 // Generate all real candidates
@@ -479,14 +491,25 @@ REAL_SENATORS.forEach(s => {
 });
 
 // Helper: add a diputado from compact format [name, abbr, dept]
-function addDiputadoCompact(entry, idx) {
-  const [name, abbr, dept] = entry;
-  const color = PARTY_COLOR_MAP[abbr] || "#607D8B";
-  const formula = PRESIDENTIAL_FORMULAS.find(f => f.abbr === abbr) ||
-    { partido: name, color, abbr };
-  const c = buildCandidateFromName(name, "Diputado", formula, 50000 + idx);
-  c.department = dept;
-  return c;
+// Parse grouped format {"abbr|dept": [name, ...]} → flat candidate array
+// Gzips from 817KB → 26KB on GitHub raw (Content-Encoding: gzip served automatically)
+function parseDiputadosGrouped(grouped) {
+  const out = [];
+  let idx = 0;
+  for (const key of Object.keys(grouped)) {
+    const pipe = key.indexOf("|");
+    const abbr = key.slice(0, pipe);
+    const dept = key.slice(pipe + 1);
+    const color = PARTY_COLOR_MAP[abbr] || "#607D8B";
+    const formula = PRESIDENTIAL_FORMULAS.find(f => f.abbr === abbr) ||
+      { partido: abbr, color, abbr };
+    for (const name of grouped[key]) {
+      const c = buildCandidateFromName(name, "Diputado", formula, 50000 + idx++);
+      c.department = dept;
+      out.push(c);
+    }
+  }
+  return out;
 }
 
 // Add fallback diputados (static subset) — replaced by async full dataset on load
@@ -984,7 +1007,7 @@ function CandidateCard({candidate,onClick}){
             <span style={{fontSize:9,background:candidate.party.color+"22",color:candidate.party.color,padding:"2px 6px",borderRadius:4,fontWeight:700,border:"1px solid "+candidate.party.color+"44"}}>{candidate.party.abbr}</span>
             <span style={{fontSize:9,color:COLORS.textMuted,background:COLORS.surface,padding:"2px 6px",borderRadius:4}}>{LEVEL_INFO[candidate.level]?LEVEL_INFO[candidate.level].icon+" ":""}{candidate.level}</span>
           </div>
-          <div style={{fontSize:9,color:COLORS.textDim,marginTop:2,fontFamily:"monospace"}}>DNI: {candidate.publicData.dni}</div>
+          <div style={{fontSize:9,color:COLORS.textDim,marginTop:2,fontFamily:"monospace"}}>{candidate.department}</div>
         </div>
         <div style={{position:"relative",width:46,height:46,flexShrink:0,marginLeft:8}}>
           <RiskMeter score={candidate.riskScore} size={46}/>
@@ -1034,10 +1057,10 @@ export default function App(){
   useEffect(()=>{
     fetch(DIPUTADOS_URL)
       .then(r=>r.json())
-      .then(data=>{
-        // Remove fallback diputados, add real ones
+      .then(grouped=>{
+        // grouped format: {"abbr|dept": [name,...]} — parses 26k candidates from 26KB gzipped
         const withoutFallback = ALL_CANDIDATES.filter(c=>!c._fallback);
-        const realDiputados = data.map((entry,i)=>addDiputadoCompact(entry,i));
+        const realDiputados = parseDiputadosGrouped(grouped);
         const merged = [...withoutFallback, ...realDiputados];
         setCandidates(merged);
         setDiputadosCount(realDiputados.length);
@@ -1051,7 +1074,7 @@ export default function App(){
 
   const filtered=candidates.filter(c=>{
     const q=search.toLowerCase();
-    const ms=!search||c.fullName.toLowerCase().includes(q)||c.party.name.toLowerCase().includes(q)||c.publicData.dni.includes(q)||c.party.abbr.toLowerCase().includes(q);
+    const ms=!search||c.fullName.toLowerCase().includes(q)||c.party.name.toLowerCase().includes(q)||c.party.abbr.toLowerCase().includes(q);
     const ml=filterLevel==="Todos"||c.level===filterLevel;
     const mr=filterRisk==="Todos"||(filterRisk==="Alto"&&c.riskScore>=70)||(filterRisk==="Medio"&&c.riskScore>=45&&c.riskScore<70)||(filterRisk==="Bajo"&&c.riskScore>=20&&c.riskScore<45)||(filterRisk==="Limpio"&&c.riskScore<20);
     const md=filterDept==="Todos"||c.department===filterDept;
@@ -1236,7 +1259,7 @@ export default function App(){
             </div>
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:10}}>
-              {filtered.map(c=><CandidateCard key={c.id} candidate={c} onClick={setSelected}/>)}
+              {filtered.map(c=><CandidateCard key={c.id} candidate={c} onClick={c=>setSelected(expandCandidate(c))}/>)}
             </div>
           </div>
         )}
