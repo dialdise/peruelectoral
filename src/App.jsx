@@ -1254,7 +1254,7 @@ export default function App(){
             </div>
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:10}}>
-              {paginated.map(c=><CandidateCard key={c.id} candidate={c} onClick={c=>setSelected(expandCandidate(c))}/>)}
+              {paginated.map(c=><CandidateCard key={filterKey+"|"+c.id} candidate={c} onClick={c=>setSelected(expandCandidate(c))}/>)}
             </div>
 
             {/* Págination controls */}
