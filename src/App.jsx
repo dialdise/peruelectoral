@@ -1047,12 +1047,8 @@ export default function App(){
       .catch(()=>setDiputadosLoaded(true));
   },[]);
 
-  // Compute filter key BEFORE filtered so we can reset page synchronously
-  const filterKey = search+"|"+filterLevel+"|"+filterRisk+"|"+filterDept+"|"+sortBy;
-  const activePage = lastFilterKey.current !== filterKey ? 1 : page;
-  if(lastFilterKey.current !== filterKey) lastFilterKey.current = filterKey;
-  // Keep page state in sync so pagination controls show correct state
-  useEffect(()=>{ if(page !== activePage) setPage(activePage); });
+  // Reset to page 1 whenever filters/sort/search/candidates change
+  useEffect(()=>{ setPage(1); },[search,filterLevel,filterRisk,filterDept,sortBy,candidates]);
 
   const filtered=candidates.filter(c=>{
     const q=search.toLowerCase();
@@ -1063,8 +1059,12 @@ export default function App(){
     return ms&&ml&&mr&&md;
   }).sort((a,b)=>sortBy==="risk"?b.riskScore-a.riskScore:a.lastName.localeCompare(b.lastName));
 
+  const filterKey = search+"|"+filterLevel+"|"+filterRisk+"|"+filterDept+"|"+sortBy;
   const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
-  const safePage=Math.min(activePage,totalPages);
+  // If filterKey changed since last render, force page 1 for the slice even before useEffect fires
+  const pageIsStale = lastFilterKey.current !== filterKey;
+  if(pageIsStale) lastFilterKey.current = filterKey;
+  const safePage = pageIsStale ? 1 : Math.min(page, totalPages);
   const paginated=filtered.slice((safePage-1)*PAGE_SIZE, safePage*PAGE_SIZE);
 
   const stats={
