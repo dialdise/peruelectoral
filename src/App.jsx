@@ -329,10 +329,8 @@ function expandCandidate(c) {
 let idCounter = 1;
 const ALL_CANDIDATES = [];
 
-PRESIDENTIAL_FORMULAS.forEach((f, fi) => {
-  // Presidente
+PRESIDENTIAL_FORMULAS.forEach((f) => {
   ALL_CANDIDATES.push(buildCandidateFromName(f.presidente, "Presidente", f, idCounter++));
-  // Vicepresidentes
   if(f.vp1) ALL_CANDIDATES.push(buildCandidateFromName(f.vp1, "Vicepresidente", f, idCounter++));
   if(f.vp2) ALL_CANDIDATES.push(buildCandidateFromName(f.vp2, "Vicepresidente", f, idCounter++));
 });
@@ -403,7 +401,8 @@ const REAL_SENATORS = [
 // Real Diputados — full dataset from JNE votoinformado.jne.gob.pe (26,290 candidates, all 35 parties x 26 districts)
 // Loaded asynchronously from diputados.json hosted on GitHub
 // Format: [[name, abbr, dept], ...]
-const DIPUTADOS_URL = "https://raw.githubusercontent.com/dialdise/peruelectoral/main/diputados.json";
+const DIPUTADOS_URL  = "https://raw.githubusercontent.com/dialdise/peruelectoral/main/diputados.json";
+const SENADORES_URL  = "https://raw.githubusercontent.com/dialdise/peruelectoral/main/senadores.json";
 
 // Small static fallback (shown while async data loads)
 const REAL_DIPUTADOS_FALLBACK = [
@@ -493,7 +492,8 @@ REAL_SENATORS.forEach(s => {
 // Helper: add a diputado from compact format [name, abbr, dept]
 // Parse grouped format {"abbr|dept": [name, ...]} → flat candidate array
 // Gzips from 817KB → 26KB on GitHub raw (Content-Encoding: gzip served automatically)
-function parseDiputadosGrouped(grouped) {
+// levelOverride: "Senador" when loading senadores.json, defaults to "Diputado"
+function parseDiputadosGrouped(grouped, levelOverride="Diputado") {
   const out = [];
   let idx = 0;
   for (const key of Object.keys(grouped)) {
@@ -504,7 +504,7 @@ function parseDiputadosGrouped(grouped) {
     const formula = PRESIDENTIAL_FORMULAS.find(f => f.abbr === abbr) ||
       { partido: abbr, color, abbr };
     for (const name of grouped[key]) {
-      const c = buildCandidateFromName(name, "Diputado", formula, 50000 + idx++);
+      const c = buildCandidateFromName(name, levelOverride, formula, 50000 + idx++);
       c.department = dept;
       out.push(c);
     }
@@ -1040,6 +1040,8 @@ export default function App(){
   const [candidates,setCandidates]=useState(ALL_CANDIDATES);
   const [diputadosLoaded,setDiputadosLoaded]=useState(false);
   const [diputadosCount,setDiputadosCount]=useState(0);
+  const [page,setPage]=useState(1);
+  const PAGE_SIZE=100;
 
   useEffect(()=>{
     const alreadyCounted=localStorage.getItem("vt_counted");
@@ -1053,24 +1055,24 @@ export default function App(){
     }
   },[]);
 
-  // Load full JNE diputados dataset (26,290 candidates) from GitHub
+  // Load full JNE datasets in parallel — diputados.json (26k) + senadores.json (when available)
   useEffect(()=>{
-    fetch(DIPUTADOS_URL)
-      .then(r=>r.json())
-      .then(grouped=>{
-        // grouped format: {"abbr|dept": [name,...]} — parses 26k candidates from 26KB gzipped
+    const fetchJson = url => fetch(url).then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); });
+    Promise.allSettled([fetchJson(DIPUTADOS_URL), fetchJson(SENADORES_URL)])
+      .then(([dipRes, senRes])=>{
         const withoutFallback = ALL_CANDIDATES.filter(c=>!c._fallback);
-        const realDiputados = parseDiputadosGrouped(grouped);
-        const merged = [...withoutFallback, ...realDiputados];
-        setCandidates(merged);
-        setDiputadosCount(realDiputados.length);
+        const extras = [];
+        if(dipRes.status==="fulfilled") extras.push(...parseDiputadosGrouped(dipRes.value));
+        if(senRes.status==="fulfilled") extras.push(...parseDiputadosGrouped(senRes.value, "Senador"));
+        setCandidates([...withoutFallback, ...extras]);
+        setDiputadosCount(extras.length);
         setDiputadosLoaded(true);
       })
-      .catch(()=>{
-        // On error keep fallback data
-        setDiputadosLoaded(true);
-      });
+      .catch(()=>setDiputadosLoaded(true));
   },[]);
+
+  // Reset to page 1 whenever filters/sort/search change
+  useEffect(()=>{ setPage(1); },[search,filterLevel,filterRisk,filterDept,sortBy,candidates]);
 
   const filtered=candidates.filter(c=>{
     const q=search.toLowerCase();
@@ -1080,6 +1082,10 @@ export default function App(){
     const md=filterDept==="Todos"||c.department===filterDept;
     return ms&&ml&&mr&&md;
   }).sort((a,b)=>sortBy==="risk"?b.riskScore-a.riskScore:a.lastName.localeCompare(b.lastName));
+
+  const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
+  const safePage=Math.min(page,totalPages);
+  const paginated=filtered.slice((safePage-1)*PAGE_SIZE, safePage*PAGE_SIZE);
 
   const stats={
     total:candidates.length,
@@ -1248,8 +1254,9 @@ export default function App(){
             </div>
 
             {/* Results count + clear */}
-            <div style={{fontSize:11,color:COLORS.textMuted,marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
-              <span>{filtered.length+" candidatos encontrados"}</span>
+            <div style={{fontSize:11,color:COLORS.textMuted,marginBottom:12,display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+              <span>{filtered.length.toLocaleString()+" candidatos encontrados"}</span>
+              {totalPages>1&&<span style={{color:COLORS.textDim}}>— mostrando {((safePage-1)*PAGE_SIZE+1).toLocaleString()}–{Math.min(safePage*PAGE_SIZE,filtered.length).toLocaleString()}</span>}
               {(filterLevel!=="Todos"||filterRisk!=="Todos"||filterDept!=="Todos"||search)&&(
                 <button onClick={()=>{setFilterLevel("Todos");setFilterRisk("Todos");setFilterDept("Todos");setSearch("");}}
                   style={{fontSize:10,background:COLORS.accent+"18",border:"1px solid "+COLORS.accent+"44",color:COLORS.accent,borderRadius:5,padding:"2px 8px",cursor:"pointer"}}>
@@ -1259,10 +1266,43 @@ export default function App(){
             </div>
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:10}}>
-              {filtered.map(c=><CandidateCard key={c.id} candidate={c} onClick={c=>setSelected(expandCandidate(c))}/>)}
+              {paginated.map(c=><CandidateCard key={c.id} candidate={c} onClick={c=>setSelected(expandCandidate(c))}/>)}
             </div>
+
+            {/* Pagination controls */}
+            {totalPages>1&&(
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,marginTop:20,flexWrap:"wrap"}}>
+                <button onClick={()=>setPage(1)} disabled={safePage===1}
+                  style={{background:COLORS.card,border:"1px solid "+COLORS.border,color:safePage===1?COLORS.textDim:COLORS.text,borderRadius:7,padding:"6px 10px",cursor:safePage===1?"default":"pointer",fontSize:11}}>«</button>
+                <button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={safePage===1}
+                  style={{background:COLORS.card,border:"1px solid "+COLORS.border,color:safePage===1?COLORS.textDim:COLORS.text,borderRadius:7,padding:"6px 12px",cursor:safePage===1?"default":"pointer",fontSize:11}}>‹ Anterior</button>
+
+                {/* Page number pills */}
+                {Array.from({length:Math.min(7,totalPages)},(_,i)=>{
+                  let pg;
+                  if(totalPages<=7) pg=i+1;
+                  else if(safePage<=4) pg=i+1;
+                  else if(safePage>=totalPages-3) pg=totalPages-6+i;
+                  else pg=safePage-3+i;
+                  return(
+                    <button key={pg} onClick={()=>setPage(pg)}
+                      style={{background:pg===safePage?COLORS.accent:COLORS.card,border:"1px solid "+(pg===safePage?COLORS.accent:COLORS.border),color:pg===safePage?"#fff":COLORS.textMuted,borderRadius:7,padding:"6px 11px",cursor:"pointer",fontSize:11,fontWeight:pg===safePage?700:400,minWidth:34}}>
+                      {pg}
+                    </button>
+                  );
+                })}
+
+                <button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={safePage===totalPages}
+                  style={{background:COLORS.card,border:"1px solid "+COLORS.border,color:safePage===totalPages?COLORS.textDim:COLORS.text,borderRadius:7,padding:"6px 12px",cursor:safePage===totalPages?"default":"pointer",fontSize:11}}>Siguiente ›</button>
+                <button onClick={()=>setPage(totalPages)} disabled={safePage===totalPages}
+                  style={{background:COLORS.card,border:"1px solid "+COLORS.border,color:safePage===totalPages?COLORS.textDim:COLORS.text,borderRadius:7,padding:"6px 10px",cursor:safePage===totalPages?"default":"pointer",fontSize:11}}>»</button>
+
+                <span style={{fontSize:10,color:COLORS.textDim,marginLeft:4}}>Página {safePage} de {totalPages.toLocaleString()}</span>
+              </div>
+            )}
           </div>
         )}
+
 
         {view==="partidos"&&(
           <div>
