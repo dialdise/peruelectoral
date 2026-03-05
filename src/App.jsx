@@ -18,7 +18,6 @@ const LEVEL_INFO = {
   "Vicepresidente":   { icon:"🤝", desc:"Primer y Segundo Vicepresidente. Forman la plancha presidencial junto al candidato.", seats:2 },
   "Senador":          { icon:"📜", desc:"Camara Alta del Congreso Bicameral (propuesta). Representacion nacional. 60 escanos.", seats:60 },
   "Diputado":         { icon:"🗳️", desc:"Camara Baja. Representacion por circunscripcion departamental. 130 escanos.", seats:130 },
-  "Parlamento Andino":{ icon:"🌎", desc:"Organo deliberativo de la Comunidad Andina (CAN). Peru elige 5 representantes.", seats:5 },
 };
 
 const LEVELS = Object.keys(LEVEL_INFO);
@@ -125,7 +124,6 @@ function genEmail(name,r){
 
 // Build candidates from real presidential formulas
 // Each formula contributes: 1 Presidente + 2 Vicepresidentes
-// Then pad with fictional Senadores, Diputados, Parlamento Andino
 
 function buildCandidateFromName(fullName, level, partyData, index) {
   const r = seededRng(index*137+42);
@@ -458,29 +456,10 @@ const REAL_DIPUTADOS_FALLBACK = [
   { name:"Fernan Altuve-Febres Lores",    partido:"Avanza Pais",        color:"#00695C", abbr:"AVP", dept:"Lima" },
 ];
 
-// Real Parlamento Andino — sourced from JNE official lists
-const REAL_PARLAMENTO_ANDINO = [
-  // Juntos por el Peru — full list from official PDF
-  { name:"Paul Fernandez Bravo",          partido:"Juntos por el Peru", color:"#00695C", abbr:"JP" },
-  { name:"Angelica Espinoza Morales",     partido:"Juntos por el Peru", color:"#00695C", abbr:"JP" },
-  { name:"Williams Sosa Gonzalo",         partido:"Juntos por el Peru", color:"#00695C", abbr:"JP" },
-  { name:"Judith Mamani Mamani",          partido:"Juntos por el Peru", color:"#00695C", abbr:"JP" },
-  { name:"Juan Rojas Vargas",             partido:"Juntos por el Peru", color:"#00695C", abbr:"JP" },
-  // Renovacion Popular
-  { name:"Harrison Mendoza Padilla",      partido:"Renovacion Popular", color:"#1565C0", abbr:"RP" },
-  { name:"Carla Aranda Ramirez",          partido:"Renovacion Popular", color:"#1565C0", abbr:"RP" },
-  // Fuerza Popular
-  { name:"Olga Ruelas Ure",               partido:"Fuerza Popular",     color:"#F5A623", abbr:"FP" },
-  { name:"Gonzalo Morocho Tucto",         partido:"Fuerza Popular",     color:"#F5A623", abbr:"FP" },
-  // Podemos Peru
-  { name:"Lelis Choque Mamani",           partido:"Podemos Peru",       color:"#7B1FA2", abbr:"PP" },
-  // Alianza para el Progreso
-  { name:"Miriam Alvarez Quiroz",         partido:"Alianza para el Progreso", color:"#003087", abbr:"APP" },
-  // Peru Libre
-  { name:"Jhon Gutierrez Torres",         partido:"Peru Libre",         color:"#CC0000", abbr:"PL" },
-  // Avanza Pais
-  { name:"Patricia Bolaños Sihuincha",    partido:"Avanza Pais",        color:"#00695C", abbr:"AVP" },
-];
+
+// Add real Parlamento Andino — REMOVED (not included in this edition)
+
+
 
 // Add real senators
 REAL_SENATORS.forEach(s => {
@@ -524,12 +503,8 @@ REAL_DIPUTADOS_FALLBACK.forEach((d, i) => {
 
 
 
-// Add real Parlamento Andino
-REAL_PARLAMENTO_ANDINO.forEach(p => {
-  const formula = PRESIDENTIAL_FORMULAS.find(f => f.abbr === p.abbr) ||
-    { partido: p.partido, color: p.color, abbr: p.abbr };
-  ALL_CANDIDATES.push(buildCandidateFromName(p.name, "Parlamento Andino", formula, idCounter++));
-});
+
+
 
 function getRisk(score) {
   if(score>=70) return {label:"ALTO RIESGO",color:COLORS.riskHigh};
