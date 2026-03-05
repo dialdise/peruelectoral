@@ -1091,6 +1091,8 @@ export default function App(){
     total:candidates.length,
     high:candidates.filter(c=>c.riskScore>=70).length,
     med:candidates.filter(c=>c.riskScore>=45&&c.riskScore<70).length,
+    low:candidates.filter(c=>c.riskScore>=20&&c.riskScore<45).length,
+    clean:candidates.filter(c=>c.riskScore<20).length,
     avg:Math.round(candidates.reduce((s,c)=>s+c.riskScore,0)/Math.max(1,candidates.length)),
   };
 
@@ -1156,17 +1158,22 @@ export default function App(){
           <div style={{fontSize:9,color:COLORS.textMuted,letterSpacing:"0.08em",marginBottom:9,lineHeight:1.4}}>
             {"SISTEMA DE INTELIGENCIA ELECTORAL · ELECCIONES GENERALES 12 ABRIL 2026 · "+new Date().toLocaleDateString("es-PE").toUpperCase()}
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>
             {[
-              {label:diputadosLoaded?"CANDIDATOS":"CARGANDO...",value:stats.total,color:diputadosLoaded?COLORS.accentBlue:COLORS.textMuted},
-              {label:"ALTO RIESGO",value:stats.high,color:COLORS.riskHigh},
-              {label:"RIESGO MEDIO",value:stats.med,color:COLORS.accentOrange},
-              {label:"INDICE PROM.",value:stats.avg,color:COLORS.accentYellow},
-              {label:"VISITANTES",value:visitors,color:COLORS.accentGreen},
-            ].map(({label,value,color})=>(
-              <div key={label} style={{background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:10,padding:"10px 12px",borderTop:"3px solid "+color}}>
-                <div style={{fontSize:22,fontWeight:900,color,fontFamily:"monospace"}}>{value}</div>
-                <div style={{fontSize:8,color:COLORS.textMuted,marginTop:2,letterSpacing:"0.07em"}}>{label}</div>
+              {label:diputadosLoaded?"TOTAL CANDIDATOS":"CARGANDO...", value:stats.total.toLocaleString(), color:diputadosLoaded?COLORS.accentBlue:COLORS.textMuted, pct:null},
+              {label:"ALTO RIESGO",  value:stats.high.toLocaleString(),  color:COLORS.riskHigh,    pct:stats.total?Math.round(stats.high/stats.total*100):0},
+              {label:"RIESGO MEDIO", value:stats.med.toLocaleString(),   color:COLORS.accentOrange, pct:stats.total?Math.round(stats.med/stats.total*100):0},
+              {label:"RIESGO BAJO",  value:stats.low.toLocaleString(),   color:COLORS.riskLow,     pct:stats.total?Math.round(stats.low/stats.total*100):0},
+              {label:"SIN INDICIOS", value:stats.clean.toLocaleString(), color:COLORS.riskClean,   pct:stats.total?Math.round(stats.clean/stats.total*100):0},
+            ].map(({label,value,color,pct})=>(
+              <div key={label} style={{background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:10,padding:"10px 12px",borderTop:"3px solid "+color,position:"relative",overflow:"hidden"}}>
+                {/* Background fill bar showing percentage */}
+                {pct!==null&&<div style={{position:"absolute",bottom:0,left:0,height:3,width:pct+"%",background:color+"55",borderRadius:"0 0 0 10px",transition:"width 0.6s ease"}}/>}
+                <div style={{fontSize:22,fontWeight:900,color,fontFamily:"monospace",lineHeight:1}}>{value}</div>
+                {pct!==null&&(
+                  <div style={{fontSize:13,fontWeight:700,color,fontFamily:"monospace",marginTop:2,opacity:0.8}}>{pct}%</div>
+                )}
+                <div style={{fontSize:8,color:COLORS.textMuted,marginTop:3,letterSpacing:"0.07em"}}>{label}</div>
               </div>
             ))}
           </div>
