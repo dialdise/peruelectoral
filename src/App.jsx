@@ -1132,10 +1132,10 @@ export default function App(){
       {/* Stats bar */}
       <div style={{background:"linear-gradient(180deg,"+COLORS.surface+" 0%,"+COLORS.bg+" 100%)",borderBottom:"1px solid "+COLORS.border,padding:"14px 12px 12px"}}>
         <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{fontSize:9,color:COLORS.textMuted,letterSpacing:"0.08em",marginBottom:9,lineHeight:1.4}}>
+          <div style={{fontSize:9,color:COLORS.textMuted,letterSpacing:"0.08em",marginBottom:9,lineHeight:1.6,wordBreak:"break-word"}}>
             {"SISTEMA DE INTELIGENCIA ELECTORAL · ELECCIONES GENERALES 12 ABRIL 2026 · "+new Date().toLocaleDateString("es-PE").toUpperCase()}
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:6}}>
             {[
               {label:diputadosLoaded?"TOTAL CANDIDATOS":"CARGANDO...", value:stats.total.toLocaleString(), color:diputadosLoaded?COLORS.accentBlue:COLORS.textMuted, pct:null},
               {label:"ALTO RIESGO",  value:stats.high.toLocaleString(),  color:COLORS.riskHigh,    pct:stats.total?Math.round(stats.high/stats.total*100):0},
@@ -1143,14 +1143,13 @@ export default function App(){
               {label:"RIESGO BAJO",  value:stats.low.toLocaleString(),   color:COLORS.riskLow,     pct:stats.total?Math.round(stats.low/stats.total*100):0},
               {label:"SIN INDICIOS", value:stats.clean.toLocaleString(), color:COLORS.riskClean,   pct:stats.total?Math.round(stats.clean/stats.total*100):0},
             ].map(({label,value,color,pct})=>(
-              <div key={label} style={{background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:10,padding:"10px 12px",borderTop:"3px solid "+color,position:"relative",overflow:"hidden"}}>
-                {/* Background fill bar showing percentage */}
+              <div key={label} style={{background:COLORS.card,border:"1px solid "+COLORS.border,borderRadius:10,padding:"8px 10px",borderTop:"3px solid "+color,position:"relative",overflow:"hidden",minWidth:0}}>
                 {pct!==null&&<div style={{position:"absolute",bottom:0,left:0,height:3,width:pct+"%",background:color+"55",borderRadius:"0 0 0 10px",transition:"width 0.6s ease"}}/>}
-                <div style={{fontSize:22,fontWeight:900,color,fontFamily:"monospace",lineHeight:1}}>{value}</div>
+                <div style={{fontSize:"clamp(14px,3vw,22px)",fontWeight:900,color,fontFamily:"monospace",lineHeight:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{value}</div>
                 {pct!==null&&(
-                  <div style={{fontSize:13,fontWeight:700,color,fontFamily:"monospace",marginTop:2,opacity:0.8}}>{pct}%</div>
+                  <div style={{fontSize:"clamp(10px,2vw,13px)",fontWeight:700,color,fontFamily:"monospace",marginTop:2,opacity:0.8}}>{pct}%</div>
                 )}
-                <div style={{fontSize:8,color:COLORS.textMuted,marginTop:3,letterSpacing:"0.07em"}}>{label}</div>
+                <div style={{fontSize:"clamp(6px,1.5vw,8px)",color:COLORS.textMuted,marginTop:3,letterSpacing:"0.06em",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{label}</div>
               </div>
             ))}
           </div>
