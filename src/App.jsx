@@ -8,7 +8,10 @@ const COLORS = {
   riskHigh:"#C8102E", riskMed:"#FF6B2B", riskLow:"#F5C518", riskClean:"#00C896",
 };
 
-const DEPARTMENTS = ["Lima","Arequipa","Cusco","La Libertad","Piura","Lambayeque","Junin","Ancash","Loreto","Cajamarca","Puno","Ica","Huanuco","San Martin","Ucayali","Ayacucho","Apurimac","Moquegua","Tacna","Tumbes","Madre de Dios","Pasco","Huancavelica","Amazonas"];
+const DEPARTMENTS = ["Lima","Lima Provincias","Arequipa","Cusco","La Libertad","Piura","Lambayeque","Junin","Ancash","Loreto","Cajamarca","Puno","Ica","Huanuco","San Martin","Ucayali","Ayacucho","Apurimac","Moquegua","Tacna","Tumbes","Madre de Dios","Pasco","Huancavelica","Amazonas","Callao"];
+
+// Abbr -> color map for all 35+ parties from JNE diputados data
+const PARTY_COLOR_MAP = {"FP":"#F5A623","APP":"#003087","PP":"#7B1FA2","JP":"#00695C","PL":"#CC0000","RP":"#1565C0","AVP":"#00695C","SP":"#F57F17","PAP":"#B71C1C","AC":"#E65100","MOR":"#6A1B9A","AN":"#1565C0","PP1":"#0277BD","CP":"#1A237E","AV":"#BF360C","FEP":"#1B5E20","FREPAP":"#795548","FL":"#4A148C","LP2":"#4E342E","PCO":"#E64A19","PTE":"#455A64","PBG":"#2E7D32","PDU":"#4527A0","PDV":"#2E7D32","PDF":"#880E4F","FE":"#EF6C00","PPT":"#00838F","PPP":"#B71C1C","ID":"#37474F","PA":"#AD1457","PRIN":"#546E7A","PLG":"#00838F","PRG":"#558B2F","SAP":"#E65100","UCD":"#6A1B9A","UN":"#0D47A1"};
 
 const LEVEL_INFO = {
   "Presidente":       { icon:"🏛️", desc:"Jefe de Estado y Gobierno. Elegido por voto directo nacional. Periodo: 5 anos.", seats:1 },
@@ -106,6 +109,7 @@ const STREET_NAMES = ["Av. Los Libertadores","Jr. Tupac Amaru","Calle Las Flores
 const DISTRICTS = ["Miraflores","San Isidro","Surco","Callao","Lince","Pueblo Libre","Jesus Maria","San Borja","La Molina","Barranco","Wanchaq","Arequipa Centro","Piura Centro","Trujillo Centro"];
 const PROFESSIONS = ["Abogado","Economista","Ingeniero Civil","Medico Cirujano","Contador Publico","Docente Universitario","Administrador de Empresas","Arquitecto","Sociologo","Politologo"];
 const EMPLOYERS = ["Congreso de la Republica","Gobierno Regional","Municipalidad Provincial","Universidad Nacional","Empresa privada","Independiente","Consultora SAC","ONG local"];
+
 
 function seededRng(seed) { let s=seed; return ()=>{ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
 function pick(arr,r){ return arr[Math.floor(r()*arr.length)]; }
@@ -384,11 +388,13 @@ const REAL_SENATORS = [
   { name:"Carolina Lizarraga Houghton",     partido:"Juntos por el Peru",        color:"#00695C", abbr:"JP", pos:4, circ:"Nacional" },
 ];
 
-// Real Diputados — sourced from official JNE PDFs and party publications
-// Juntos por el Peru (JP) — complete list from jp.org.pe official PDF (Oct 2025)
-// Renovacion Popular (RP) — from El Comercio/Correo Dec 2025
-// Other parties — from JEE inadmisibles coverage and party press releases
-const REAL_DIPUTADOS = [
+// Real Diputados — full dataset from JNE votoinformado.jne.gob.pe (26,290 candidates, all 35 parties x 26 districts)
+// Loaded asynchronously from diputados.json hosted on GitHub
+// Format: [[name, abbr, dept], ...]
+const DIPUTADOS_URL = "https://raw.githubusercontent.com/dialdise/peruelectoral/main/diputados.json";
+
+// Small static fallback (shown while async data loads)
+const REAL_DIPUTADOS_FALLBACK = [
   // Juntos por el Peru — Lima (full from PDF)
   { name:"Roberto Sanchez Palomino",      partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"Lima" },
   { name:"Giannina Avendano Vilca",       partido:"Juntos por el Peru", color:"#00695C", abbr:"JP", dept:"Lima" },
@@ -472,14 +478,28 @@ REAL_SENATORS.forEach(s => {
   ALL_CANDIDATES.push(buildCandidateFromName(s.name, "Senador", formula, idCounter++));
 });
 
-// Add real Diputados
-REAL_DIPUTADOS.forEach(d => {
+// Helper: add a diputado from compact format [name, abbr, dept]
+function addDiputadoCompact(entry, idx) {
+  const [name, abbr, dept] = entry;
+  const color = PARTY_COLOR_MAP[abbr] || "#607D8B";
+  const formula = PRESIDENTIAL_FORMULAS.find(f => f.abbr === abbr) ||
+    { partido: name, color, abbr };
+  const c = buildCandidateFromName(name, "Diputado", formula, 50000 + idx);
+  c.department = dept;
+  return c;
+}
+
+// Add fallback diputados (static subset) — replaced by async full dataset on load
+REAL_DIPUTADOS_FALLBACK.forEach((d, i) => {
   const formula = PRESIDENTIAL_FORMULAS.find(f => f.abbr === d.abbr) ||
     { partido: d.partido, color: d.color, abbr: d.abbr };
   const c = buildCandidateFromName(d.name, "Diputado", formula, idCounter++);
   c.department = d.dept || c.department;
+  c._fallback = true;
   ALL_CANDIDATES.push(c);
 });
+
+
 
 // Add real Parlamento Andino
 REAL_PARLAMENTO_ANDINO.forEach(p => {
@@ -993,24 +1013,43 @@ export default function App(){
   const [filterDept,setFilterDept]=useState("Todos");
   const [sortBy,setSortBy]=useState("risk");
   const [selected,setSelected]=useState(null);
-  const [visitors,setVisitors]=useState(0);
+  const [visitors,setVisitors]=useState("...");
+  const [candidates,setCandidates]=useState(ALL_CANDIDATES);
+  const [diputadosLoaded,setDiputadosLoaded]=useState(false);
+  const [diputadosCount,setDiputadosCount]=useState(0);
 
   useEffect(()=>{
-    try {
-      let uid=localStorage.getItem("vt_uid");
-      if(!uid){ uid=Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem("vt_uid",uid); }
-      const count=parseInt(localStorage.getItem("vt_count")||"0");
-      const known=JSON.parse(localStorage.getItem("vt_known")||"[]");
-      if(!known.includes(uid)){
-        const n=count+1;
-        localStorage.setItem("vt_count",n);
-        localStorage.setItem("vt_known",JSON.stringify([...known,uid]));
-        setVisitors(n);
-      } else { setVisitors(count); }
-    } catch(e){ setVisitors("—"); }
+    const alreadyCounted=localStorage.getItem("vt_counted");
+    if(!alreadyCounted){
+      fetch("https://api.countapi.xyz/hit/vototransparente.info/visitors")
+        .then(r=>r.json()).then(d=>{ setVisitors(d.value); localStorage.setItem("vt_counted","1"); })
+        .catch(()=>setVisitors("—"));
+    } else {
+      fetch("https://api.countapi.xyz/get/vototransparente.info/visitors")
+        .then(r=>r.json()).then(d=>setVisitors(d.value)).catch(()=>setVisitors("—"));
+    }
   },[]);
 
-  const filtered=ALL_CANDIDATES.filter(c=>{
+  // Load full JNE diputados dataset (26,290 candidates) from GitHub
+  useEffect(()=>{
+    fetch(DIPUTADOS_URL)
+      .then(r=>r.json())
+      .then(data=>{
+        // Remove fallback diputados, add real ones
+        const withoutFallback = ALL_CANDIDATES.filter(c=>!c._fallback);
+        const realDiputados = data.map((entry,i)=>addDiputadoCompact(entry,i));
+        const merged = [...withoutFallback, ...realDiputados];
+        setCandidates(merged);
+        setDiputadosCount(realDiputados.length);
+        setDiputadosLoaded(true);
+      })
+      .catch(()=>{
+        // On error keep fallback data
+        setDiputadosLoaded(true);
+      });
+  },[]);
+
+  const filtered=candidates.filter(c=>{
     const q=search.toLowerCase();
     const ms=!search||c.fullName.toLowerCase().includes(q)||c.party.name.toLowerCase().includes(q)||c.publicData.dni.includes(q)||c.party.abbr.toLowerCase().includes(q);
     const ml=filterLevel==="Todos"||c.level===filterLevel;
@@ -1020,27 +1059,27 @@ export default function App(){
   }).sort((a,b)=>sortBy==="risk"?b.riskScore-a.riskScore:a.lastName.localeCompare(b.lastName));
 
   const stats={
-    total:ALL_CANDIDATES.length,
-    high:ALL_CANDIDATES.filter(c=>c.riskScore>=70).length,
-    med:ALL_CANDIDATES.filter(c=>c.riskScore>=45&&c.riskScore<70).length,
-    avg:Math.round(ALL_CANDIDATES.reduce((s,c)=>s+c.riskScore,0)/ALL_CANDIDATES.length),
+    total:candidates.length,
+    high:candidates.filter(c=>c.riskScore>=70).length,
+    med:candidates.filter(c=>c.riskScore>=45&&c.riskScore<70).length,
+    avg:Math.round(candidates.reduce((s,c)=>s+c.riskScore,0)/Math.max(1,candidates.length)),
   };
 
   const partyStats=PRESIDENTIAL_FORMULAS.map(f=>{
-    const pc=ALL_CANDIDATES.filter(c=>c.party.abbr===f.abbr);
+    const pc=candidates.filter(c=>c.party.abbr===f.abbr);
     return{...f,count:pc.length,avgRisk:pc.length?Math.round(pc.reduce((s,c)=>s+c.riskScore,0)/pc.length):0};
   }).sort((a,b)=>b.avgRisk-a.avgRisk);
 
-  const countLv=(lv)=>lv==="Todos"?ALL_CANDIDATES.length:ALL_CANDIDATES.filter(c=>c.level===lv).length;
+  const countLv=(lv)=>lv==="Todos"?candidates.length:candidates.filter(c=>c.level===lv).length;
   const countRk=(rv)=>{
-    if(rv==="Todos") return ALL_CANDIDATES.length;
-    if(rv==="Alto") return ALL_CANDIDATES.filter(c=>c.riskScore>=70).length;
-    if(rv==="Medio") return ALL_CANDIDATES.filter(c=>c.riskScore>=45&&c.riskScore<70).length;
-    if(rv==="Bajo") return ALL_CANDIDATES.filter(c=>c.riskScore>=20&&c.riskScore<45).length;
-    if(rv==="Limpio") return ALL_CANDIDATES.filter(c=>c.riskScore<20).length;
+    if(rv==="Todos") return candidates.length;
+    if(rv==="Alto") return candidates.filter(c=>c.riskScore>=70).length;
+    if(rv==="Medio") return candidates.filter(c=>c.riskScore>=45&&c.riskScore<70).length;
+    if(rv==="Bajo") return candidates.filter(c=>c.riskScore>=20&&c.riskScore<45).length;
+    if(rv==="Limpio") return candidates.filter(c=>c.riskScore<20).length;
     return 0;
   };
-  const countDp=(d)=>d==="Todos"?ALL_CANDIDATES.length:ALL_CANDIDATES.filter(c=>c.department===d).length;
+  const countDp=(d)=>d==="Todos"?candidates.length:candidates.filter(c=>c.department===d).length;
 
   const RISK_OPTS=[
     {val:"Todos",label:"Todos",color:COLORS.textMuted,desc:"Todos los candidatos sin filtro de riesgo"},
@@ -1077,7 +1116,7 @@ export default function App(){
           </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
             {[
-              {label:"CANDIDATOS",value:stats.total,color:COLORS.accentBlue},
+              {label:diputadosLoaded?"CANDIDATOS":"CARGANDO...",value:stats.total,color:diputadosLoaded?COLORS.accentBlue:COLORS.textMuted},
               {label:"ALTO RIESGO",value:stats.high,color:COLORS.riskHigh},
               {label:"RIESGO MEDIO",value:stats.med,color:COLORS.accentOrange},
               {label:"INDICE PROM.",value:stats.avg,color:COLORS.accentYellow},
@@ -1221,7 +1260,7 @@ export default function App(){
             <div style={{fontSize:13,color:COLORS.textMuted,marginBottom:16}}>Distribucion de riesgo por departamento. Haz clic para filtrar candidatos.</div>
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:8}}>
               {DEPARTMENTS.map(dept=>{
-                const dc=ALL_CANDIDATES.filter(c=>c.department===dept);
+                const dc=candidates.filter(c=>c.department===dept);
                 const high=dc.filter(c=>c.riskScore>=70).length;
                 const avg=dc.length?Math.round(dc.reduce((s,c)=>s+c.riskScore,0)/dc.length):0;
                 const {color}=getRisk(avg);
@@ -1249,7 +1288,7 @@ export default function App(){
         </span>
       </div>
 
-      {selected&&<Modal candidate={selected} onClose={()=>setSelected(null)} all={ALL_CANDIDATES}/>}
+      {selected&&<Modal candidate={selected} onClose={()=>setSelected(null)} all={candidates}/>}
     </div>
   );
 }
