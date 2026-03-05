@@ -11,7 +11,7 @@ const COLORS = {
 const DEPARTMENTS = ["Lima","Lima Provincias","Arequipa","Cusco","La Libertad","Piura","Lambayeque","Junin","Ancash","Loreto","Cajamarca","Puno","Ica","Huanuco","San Martin","Ucayali","Ayacucho","Apurimac","Moquegua","Tacna","Tumbes","Madre de Dios","Pasco","Huancavelica","Amazonas","Callao"];
 
 // Abbr -> color map for all 35+ parties from JNE diputados data
-const PARTY_COLOR_MAP = {"FP":"#F5A623","APP":"#003087","PP":"#7B1FA2","JP":"#00695C","PL":"#CC0000","RP":"#1565C0","AVP":"#00695C","SP":"#F57F17","PAP":"#B71C1C","AC":"#E65100","MOR":"#6A1B9A","AN":"#1565C0","PP1":"#0277BD","CP":"#1A237E","AV":"#BF360C","FEP":"#1B5E20","FREPAP":"#795548","FL":"#4A148C","LP2":"#4E342E","PCO":"#E64A19","PTE":"#455A64","PBG":"#2E7D32","PDU":"#4527A0","PDV":"#2E7D32","PDF":"#880E4F","FE":"#EF6C00","PPT":"#00838F","PPP":"#B71C1C","ID":"#37474F","PA":"#AD1457","PRIN":"#546E7A","PLG":"#00838F","PRG":"#558B2F","SAP":"#E65100","UCD":"#6A1B9A","UN":"#0D47A1"};
+const PARTY_COLOR_MAP = {"FP":"#F5A623","APP":"#003087","PP":"#7B1FA2","JP":"#00695C","PL":"#CC0000","RP":"#1565C0","AVP":"#00695C","SP":"#F57F17","PAP":"#B71C1C","AC":"#E65100","MOR":"#6A1B9A","AN":"#1565C0","PP1":"#0277BD","CP":"#1A237E","AV":"#BF360C","FEP":"#1B5E20","FREPAP":"#795548","FL":"#4A148C","LP2":"#4E342E","PCO":"#E64A19","PTE":"#455A64","PBG":"#2E7D32","PDU":"#4527A0","PDV":"#2E7D32","PDF":"#880E4F","FE":"#EF6C00","PPT":"#00838F","PPP":"#B71C1C","ID":"#37474F","PA":"#AD1457","PRIN":"#546E7A","PLG":"#00838F","PRG":"#558B2F","SAP":"#E65100","UCD":"#6A1B9A","UN":"#0D47A1","SC":"#00695C"};
 
 const LEVEL_INFO = {
   "Presidente":       { icon:"🏛️", desc:"Jefe de Estado y Gobierno. Elegido por voto directo nacional. Periodo: 5 anos.", seats:1 },
