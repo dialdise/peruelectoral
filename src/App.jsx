@@ -1070,16 +1070,29 @@ export default function App(){
     return{...f,count:pc.length,avgRisk:pc.length?Math.round(pc.reduce((s,c)=>s+c.riskScore,0)/pc.length):0};
   }).sort((a,b)=>b.avgRisk-a.avgRisk);
 
-  const countLv=(lv)=>lv==="Todos"?candidates.length:candidates.filter(c=>c.level===lv).length;
+  // Each counter respects the OTHER active filters (so badge counts stay consistent with what's visible)
+  const byLevel = filterLevel==="Todos" ? candidates : candidates.filter(c=>c.level===filterLevel);
+  const byDept  = filterDept==="Todos"  ? candidates : candidates.filter(c=>c.department===filterDept);
+  const byRisk  = filterRisk==="Todos"  ? candidates
+    : candidates.filter(c=>filterRisk==="Alto"?c.riskScore>=70:filterRisk==="Medio"?(c.riskScore>=45&&c.riskScore<70):filterRisk==="Bajo"?(c.riskScore>=20&&c.riskScore<45):c.riskScore<20);
+
+  const countLv=(lv)=>{
+    const base = filterRisk==="Todos" ? byDept : byDept.filter(c=>filterRisk==="Alto"?c.riskScore>=70:filterRisk==="Medio"?(c.riskScore>=45&&c.riskScore<70):filterRisk==="Bajo"?(c.riskScore>=20&&c.riskScore<45):c.riskScore<20);
+    return lv==="Todos" ? base.length : base.filter(c=>c.level===lv).length;
+  };
   const countRk=(rv)=>{
-    if(rv==="Todos") return candidates.length;
-    if(rv==="Alto") return candidates.filter(c=>c.riskScore>=70).length;
-    if(rv==="Medio") return candidates.filter(c=>c.riskScore>=45&&c.riskScore<70).length;
-    if(rv==="Bajo") return candidates.filter(c=>c.riskScore>=20&&c.riskScore<45).length;
-    if(rv==="Limpio") return candidates.filter(c=>c.riskScore<20).length;
+    const base = byLevel.filter(c=>filterDept==="Todos"||c.department===filterDept);
+    if(rv==="Todos") return base.length;
+    if(rv==="Alto") return base.filter(c=>c.riskScore>=70).length;
+    if(rv==="Medio") return base.filter(c=>c.riskScore>=45&&c.riskScore<70).length;
+    if(rv==="Bajo") return base.filter(c=>c.riskScore>=20&&c.riskScore<45).length;
+    if(rv==="Limpio") return base.filter(c=>c.riskScore<20).length;
     return 0;
   };
-  const countDp=(d)=>d==="Todos"?candidates.length:candidates.filter(c=>c.department===d).length;
+  const countDp=(d)=>{
+    const base = byLevel.filter(c=>filterRisk==="Todos"||( filterRisk==="Alto"?c.riskScore>=70:filterRisk==="Medio"?(c.riskScore>=45&&c.riskScore<70):filterRisk==="Bajo"?(c.riskScore>=20&&c.riskScore<45):c.riskScore<20));
+    return d==="Todos" ? base.length : base.filter(c=>c.department===d).length;
+  };
 
   const RISK_OPTS=[
     {val:"Todos",label:"Todos",color:COLORS.textMuted,desc:"Todos los candidatos sin filtro de riesgo"},
